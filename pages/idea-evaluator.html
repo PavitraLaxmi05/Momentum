@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Evaluator - Momentum</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="hidden md:flex md:flex-shrink-0">
+            <div class="flex flex-col w-64">
+                <div class="flex flex-col h-0 flex-1 bg-white dark:bg-gray-800 shadow-lg">
+                    <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                        <div class="flex items-center flex-shrink-0 px-4">
+                            <a href="../index.html" class="text-green-600 dark:text-green-400 font-bold text-xl">Momentum</a>
+                        </div>
+                        <nav class="mt-5 flex-1 px-2 bg-white dark:bg-gray-800 space-y-1">
+                            <a href="dashboard.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                Dashboard
+                            </a>
+
+                            <a href="ecobot.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg>
+                                EcoBot
+                            </a>
+
+                            <a href="idea-evaluator.html" class="bg-green-100 dark:bg-green-800 text-green-900 dark:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-green-500 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                                Idea Evaluator
+                            </a>
+
+                            <a href="product-directory.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                                Product Directory
+                            </a>
+
+                            <a href="carbon-coach.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Carbon Coach
+                            </a>
+
+                            <a href="greenswap.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                GreenSwap Network
+                            </a>
+
+                            <a href="circularity-hub.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Regional Circularity Hub
+                            </a>
+
+                            <a href="comics-data.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                                <svg class="mr-3 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                Comics & Research Data
+                            </a>
+                        </nav>
+                    </div>
+                    <div class="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+                        <a href="#" class="flex-shrink-0 group block">
+                            <div class="flex items-center">
+                                <div>
+                                    <img class="inline-block h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-base font-medium text-gray-700 dark:text-white">User Name</p>
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">View profile</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex flex-col w-0 flex-1 overflow-hidden">
+            <div class="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
+                <button type="button" class="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500" id="mobile-menu-button">
+                    <span class="sr-only">Open sidebar</span>
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile menu -->
+            <div class="fixed inset-0 flex z-40 md:hidden hidden" id="mobile-menu">
+                <div class="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-75 dark:bg-opacity-75" aria-hidden="true" id="mobile-menu-overlay"></div>
+                <div class="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-800 shadow-lg">
+                    <div class="absolute top-0 right-0 -mr-12 pt-2">
+                        <button type="button" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" id="mobile-menu-close">
+                            <span class="sr-only">Close sidebar</span>
+                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+                        <div class="flex-shrink-0 flex items-center px-4">
+                            <a href="../index.html" class="text-green-600 dark:text-green-400 font-bold text-xl">Momentum</a>
+                        </div>
+                        <nav class="mt-5 px-2 space-y-1">
+                            <!-- Mobile navigation links (same as sidebar) -->
+                            <a href="dashboard.html" class="text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white group flex items-center px-2 py-2 text-base font-medium rounded-md">
+                                <svg class="mr-4 h-6 w-6 text-gray-400 dark:text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                Dashboard
+                            </a>
+                            <a href="idea-evaluator.html" class="bg-green-100 dark:bg-green-800 text-green-900 dark:text-white group flex items-center px-2 py-2 text-base font-medium rounded-md">
+                                <svg class="mr-4 h-6 w-6 text-green-500 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                                Idea Evaluator
+                            </a>
+                            <!-- Repeat for other navigation items -->
+                        </nav>
+                    </div>
+                    <div class="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+                        <a href="#" class="flex-shrink-0 group block">
+                            <div class="flex items-center">
+                                <div>
+                                    <img class="inline-block h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-base font-medium text-gray-700 dark:text-white">User Name</p>
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">View profile</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 w-14">
+                    <!-- Force sidebar to shrink to fit close icon -->
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="relative z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
+                <div class="flex-1 px-4 flex justify-between">
+                    <div class="flex-1 flex">
+                        <div class="w-full flex md:ml-0">
+                            <div class="relative w-full">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input id="search" name="search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:border-green-500 sm:text-sm" placeholder="Search" type="search">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-300 focus:outline-none">
+                            <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                            <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Profile dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" class="max-w-xs bg-white dark:bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Open user menu</span>
+                                    <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                </button>
+                            </div>
+                            <div class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="user-menu">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Your Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Settings</a>
+                                <a href="../index.html" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breadcrumb -->
+            <nav class="bg-white dark:bg-gray-800 shadow-sm" aria-label="Breadcrumb">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center space-x-2 py-3 text-sm">
+                        <a href="../index.html" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white">Home</a>
+                        <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <a href="dashboard.html" class="text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white">Dashboard</a>
+                        <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-100 font-medium">Idea Evaluator</span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="flex-1 relative overflow-y-auto focus:outline-none">
+                <div class="py-6">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Idea Evaluator</h1>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300">Submit your sustainability ideas for expert evaluation and feedback.</p>
+                    </div>
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-6">
+                        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                            <div class="px-4 py-5 sm:px-6">
+                                <h2 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Submit Your Idea</h2>
+                                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Fill out the form below to submit your sustainability idea for evaluation.</p>
+                            </div>
+                            <div class="border-t border-gray-200 dark:border-gray-700">
+                                <form id="idea-form" class="px-4 py-5 sm:p-6">
+                                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                        <div class="col-span-1 sm:col-span-2">
+                                            <label for="idea-title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Idea Title</label>
+                                            <input type="text" name="idea-title" id="idea-title" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" placeholder="A concise title for your idea" required>
+                                        </div>
+
+                                        <div class="col-span-1 sm:col-span-2">
+                                            <label for="idea-category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                                            <select id="idea-category" name="idea-category" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm dark:text-white" required>
+                                                <option value="">Select a category</option>
+                                                <option value="energy">Energy Efficiency</option>
+                                                <option value="waste">Waste Reduction</option>
+                                                <option value="water">Water Conservation</option>
+                                                <option value="transportation">Sustainable Transportation</option>
+                                                <option value="food">Sustainable Food Systems</option>
+                                                <option value="community">Community Engagement</option>
+                                                <option value="business">Sustainable Business</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-span-1">
+                                            <label for="implementation-cost" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estimated Implementation Cost</label>
+                                            <select id="implementation-cost" name="implementation-cost" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm dark:text-white" required>
+                                                <option value="">Select cost range</option>
+                                                <option value="low">Low (< $100)</option>
+                                                <option value="medium">Medium ($100 - $1,000)</option>
+                                                <option value="high">High ($1,000 - $10,000)</option>
+                                                <option value="very-high">Very High (> $10,000)</option>
+                                                <option value="unknown">Unknown</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-span-1">
+                                            <label for="implementation-time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estimated Implementation Time</label>
+                                            <select id="implementation-time" name="implementation-time" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm dark:text-white" required>
+                                                <option value="">Select time range</option>
+                                                <option value="days">Days</option>
+                                                <option value="weeks">Weeks</option>
+                                                <option value="months">Months</option>
+                                                <option value="years">Years</option>
+                                                <option value="unknown">Unknown</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-span-1 sm:col-span-2">
+                                            <label for="idea-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Detailed Description</label>
+                                            <textarea id="idea-description" name="idea-description" rows="5" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" placeholder="Describe your sustainability idea in detail..." required></textarea>
+                                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Include the problem it solves, how it works, and potential impact.</p>
+                                        </div>
+
+                                        <div class="col-span-1 sm:col-span-2">
+                                            <label for="idea-benefits" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Environmental Benefits</label>
+                                            <textarea id="idea-benefits" name="idea-benefits" rows="3" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" placeholder="List the environmental benefits of your idea..." required></textarea>
+                                        </div>
+
+                                        <div class="col-span-1 sm:col-span-2">
+                                            <label for="idea-challenges" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Potential Challenges</label>
+                                            <textarea id="idea-challenges" name="idea-challenges" rows="3" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" placeholder="What challenges might arise during implementation?"></textarea>
+                                        </div>
+
+                                        <div class="col-span-1 sm:col-span-2">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Attachments (optional)</label>
+                                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
+                                                <div class="space-y-1 text-center">
+                                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                    <div class="flex text-sm text-gray-600 dark:text-gray-400">
+                                                        <label for="file-upload" class="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+                                                            <span>Upload files</span>
+                                                            <input id="file-upload" name="file-upload" type="file" class="sr-only" multiple>
+                                                        </label>
+                                                        <p class="pl-1">or drag and drop</p>
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        PNG, JPG, PDF up to 10MB
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-6">
+                                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                            Submit for Evaluation
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Evaluation Results (hidden initially) -->
+                        <div id="evaluation-results" class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg hidden">
+                            <div class="px-4 py-5 sm:px-6">
+                                <h2 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Evaluation Results</h2>
+                                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">AI-powered assessment of your sustainability idea.</p>
+                            </div>
+                            <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
+                                <div class="mb-6">
+                                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Overall Score</h3>
+                                    <div class="relative pt-1">
+                                        <div class="flex mb-2 items-center justify-between">
+                                            <div>
+                                                <span id="score-value" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-white bg-green-600">85/100</span>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="text-xs font-semibold inline-block text-green-600 dark:text-green-400">Excellent</span>
+                                            </div>
+                                        </div>
+                                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                            <div id="score-bar" style="width: 85%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-6">
+                                    <div>
+                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Environmental Impact</h3>
+                                        <div class="relative pt-1">
+                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                                <div style="width: 90%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                            </div>
+                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">High positive impact on environment</span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Feasibility</h3>
+                                        <div class="relative pt-1">
+                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                                <div style="width: 75%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                            </div>
+                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Moderately feasible with some challenges</span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Cost Efficiency</h3>
+                                        <div class="relative pt-1">
+                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                                <div style="width: 80%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                            </div>
+                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Good return on investment</span>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Scalability</h3>
+                                        <div class="relative pt-1">
+                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                                <div style="width: 85%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                            </div>
+                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Highly scalable solution</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6">
+                                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Detailed Feedback</h3>
+                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-md p-4">
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3" id="feedback-text">
+                                            Your idea shows excellent potential for positive environmental impact. The approach to reducing waste through innovative recycling methods is particularly noteworthy. 
+                                        </p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                                            <strong>Strengths:</strong> Innovative approach, addresses a clear environmental need, reasonable implementation cost, potential for community engagement.
+                                        </p>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                                            <strong>Areas for improvement:</strong> Consider partnerships with local businesses to enhance scalability. The timeline might be optimistic given regulatory requirements. Additional research on similar initiatives could strengthen your implementation plan.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Next Steps</h3>
+                                    <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300">
+                                        <li class="mb-1">Refine your implementation plan with the suggested improvements</li>
+                                        <li class="mb-1">Research potential funding sources and partnerships</li>
+                                        <li class="mb-1">Develop a more detailed budget and timeline</li>
+                                        <li>Consider a small-scale pilot to test your concept</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Previous Ideas Section -->
+                        <div class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+                            <div class="px-4 py-5 sm:px-6">
+                                <h2 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Previously Submitted Ideas</h2>
+                                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Browse ideas submitted by the community.</p>
+                            </div>
+                            <div class="border-t border-gray-200 dark:border-gray-700">
+                                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    <li>
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm font-medium text-green-600 dark:text-green-400 truncate">Community Composting Network</p>
+                                                <div class="ml-2 flex-shrink-0 flex">
+                                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200">Score: 92/100</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        Waste Reduction
+                                                    </p>
+                                                    <p class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0 sm:ml-6">
+                                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        Implementation: Medium
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+                                                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <p>
+                                                        Submitted on <time datetime="2023-01-15">January 15, 2023</time>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm font-medium text-green-600 dark:text-green-400 truncate">Solar-Powered Community Charging Stations</p>
+                                                <div class="ml-2 flex-shrink-0 flex">
+                                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200">Score: 88/100</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        Energy Efficiency
+                                                    </p>
+                                                    <p class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0 sm:ml-6">
+                                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        Implementation: High
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+                                                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <p>
+                                                        Submitted on <time datetime="2023-01-10">January 10, 2023</time>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                    <li>
+                                        <div class="px-4 py-4 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm font-medium text-green-600 dark:text-green-400 truncate">Rainwater Harvesting System for Urban Gardens</p>
+                                                <div class="ml-2 flex-shrink-0 flex">
+                                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200">Score: 85/100</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 sm:flex sm:justify-between">
+                                                <div class="sm:flex">
+                                                    <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        Water Conservation
+                                                    </p>
+                                                    <p class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0 sm:ml-6">
+                                                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        Implementation: Medium
+                                                    </p>
+                                                </div>
+                                                <div class="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+                                                    <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    <p>
+                                                        Submitted on <time datetime="2022-12-28">December 28, 2022</time>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 text-right sm:px-6">
+                                <a href="#" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    View All Ideas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.5.3/dist/fuse.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Form submission handling
+        document.getElementById('idea-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In a real application, this would send data to a backend API
+            // For demo purposes, we'll just show the evaluation results
+            document.getElementById('evaluation-results').classList.remove('hidden');
+            
+            // Scroll to results
+            document.getElementById('evaluation-results').scrollIntoView({ behavior: 'smooth' });
+            
+            // Update feedback text based on form input
+            const ideaTitle = document.getElementById('idea-title').value;
+            const ideaCategory = document.getElementById('idea-category').value;
+            const feedbackText = document.getElementById('feedback-text');
+            
+            feedbackText.textContent = `Your idea "${ideaTitle}" in the ${document.getElementById('idea-category').options[document.getElementById('idea-category').selectedIndex].text} category shows excellent potential for positive environmental impact. The approach is innovative and addresses important sustainability challenges.`;
+        });
+        
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.remove('hidden');
+        });
+        
+        document.getElementById('mobile-menu-close').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+        });
+        
+        document.getElementById('mobile-menu-overlay').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+        });
+        
+        // User menu toggle
+        document.getElementById('user-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('user-menu');
+            menu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

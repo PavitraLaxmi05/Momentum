@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Household Carbon Coach - Momentum</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+    <div class="min-h-screen flex flex-col">
+        <!-- Sidebar Navigation (hidden on mobile) -->
+        <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+            <div class="flex-1 flex flex-col min-h-0 bg-green-700 dark:bg-gray-800">
+                <div class="flex items-center h-16 flex-shrink-0 px-4 bg-green-800 dark:bg-gray-900">
+                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg" alt="Momentum">
+                    <span class="ml-2 text-white text-lg font-semibold">Momentum</span>
+                </div>
+                <div class="flex-1 flex flex-col overflow-y-auto">
+                    <nav class="flex-1 px-2 py-4 space-y-1">
+                        <a href="dashboard.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            Dashboard
+                        </a>
+
+                        <a href="ecobot.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            EcoBot
+                        </a>
+
+                        <a href="idea-evaluator.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                            Idea Evaluator
+                        </a>
+
+                        <a href="product-directory.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            Product Directory
+                        </a>
+
+                        <a href="carbon-coach.html" class="bg-green-800 dark:bg-gray-700 text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                            Carbon Coach
+                        </a>
+
+                        <a href="greenswap.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            GreenSwap Network
+                        </a>
+
+                        <a href="circularity-hub.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Regional Circularity Hub
+                        </a>
+
+                        <a href="comics-data.html" class="text-white hover:bg-green-600 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <svg class="mr-3 h-6 w-6 text-green-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Comics & Research Data
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="dashboard.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Dashboard</a>
+                <a href="ecobot.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">EcoBot</a>
+                <a href="idea-evaluator.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Idea Evaluator</a>
+                <a href="product-directory.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Product Directory</a>
+                <a href="carbon-coach.html" class="bg-green-900 text-white block px-3 py-2 rounded-md text-base font-medium">Carbon Coach</a>
+                <a href="greenswap.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">GreenSwap Network</a>
+                <a href="circularity-hub.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Regional Circularity Hub</a>
+                <a href="comics-data.html" class="text-gray-300 hover:bg-green-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Comics & Research Data</a>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="md:pl-64 flex flex-col flex-1">
+            <div class="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white dark:bg-gray-800 shadow">
+                <button id="mobile-menu-button" type="button" class="md:hidden px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500">
+                    <span class="sr-only">Open sidebar</span>
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="flex-1 px-4 flex justify-between">
+                    <div class="flex-1 flex">
+                        <form class="w-full flex md:ml-0" action="#" method="GET">
+                            <label for="search-input" class="sr-only">Search</label>
+                            <div class="relative w-full text-gray-400 focus-within:text-gray-600">
+                                <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <input id="search-input" class="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent sm:text-sm" placeholder="Search" type="search">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <!-- Theme toggle -->
+                        <button id="theme-toggle" type="button" class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            <!-- Sun icon -->
+                            <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                            </svg>
+                            <!-- Moon icon -->
+                            <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Profile dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button id="user-menu-button" type="button" class="max-w-xs bg-white dark:bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-expanded="false" aria-haspopup="true">
+                                    <span class="sr-only">Open user menu</span>
+                                    <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                </button>
+                            </div>
+                            <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <main class="flex-1">
+                <div class="py-6">
+                    <!-- Breadcrumb -->
+                    <nav class="hidden sm:flex px-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+                        <ol class="flex items-center space-x-4">
+                            <li>
+                                <div>
+                                    <a href="dashboard.html" class="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200">
+                                        <svg class="flex-shrink-0 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                                        </svg>
+                                        <span class="sr-only">Home</span>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                                    </svg>
+                                    <a href="dashboard.html" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200">Dashboard</a>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="flex-shrink-0 h-5 w-5 text-gray-300 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+                                    </svg>
+                                    <span class="ml-4 text-sm font-medium text-gray-500 dark:text-gray-200" aria-current="page">Carbon Coach</span>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+
+                    <div class="px-4 sm:px-6 lg:px-8">
+                        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Household Carbon Coach</h1>
+                        <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">Calculate your household carbon footprint and get personalized tips to reduce your environmental impact.</p>
+                        
+                        <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                            <!-- Input Section -->
+                            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">Input Your Data</h2>
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Upload your electricity bill or enter your usage manually.</p>
+                                    
+                                    <div class="mt-6">
+                                        <div class="mb-6">
+                                            <h3 class="text-md font-medium text-gray-900 dark:text-white">Upload Electricity Bill</h3>
+                                            <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
+                                                <div class="space-y-1 text-center">
+                                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4h-12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                    <div class="flex text-sm text-gray-600 dark:text-gray-400">
+                                                        <label for="file-upload" class="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+                                                            <span>Upload a file</span>
+                                                            <input id="file-upload" name="file-upload" type="file" class="sr-only" accept="image/*,application/pdf">
+                                                        </label>
+                                                        <p class="pl-1">or drag and drop</p>
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        PNG, JPG, PDF up to 10MB
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div id="upload-status" class="mt-2 text-sm text-gray-500 dark:text-gray-400 hidden">
+                                                <div class="flex items-center">
+                                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    <span>Processing your bill...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-6">
+                                            <h3 class="text-md font-medium text-gray-900 dark:text-white">Or Enter Manually</h3>
+                                            <form id="carbon-form" class="mt-4 space-y-4">
+                                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                    <div>
+                                                        <label for="electricity" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Electricity (kWh/month)</label>
+                                                        <input type="number" name="electricity" id="electricity" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="0">
+                                                    </div>
+                                                    <div>
+                                                        <label for="natural-gas" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Natural Gas (therms/month)</label>
+                                                        <input type="number" name="natural-gas" id="natural-gas" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                    <div>
+                                                        <label for="water" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Water (gallons/month)</label>
+                                                        <input type="number" name="water" id="water" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="0">
+                                                    </div>
+                                                    <div>
+                                                        <label for="waste" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Waste (lbs/week)</label>
+                                                        <input type="number" name="waste" id="waste" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="0">
+                                                    </div>
+                                                </div>
+                                                
+                                                <div>
+                                                    <label for="transportation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Transportation (miles/week)</label>
+                                                    <input type="number" name="transportation" id="transportation" class="mt-1 focus:ring-green-500 focus:border-green-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="0">
+                                                </div>
+                                                
+                                                <div>
+                                                    <label for="household-size" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Household Size</label>
+                                                    <select id="household-size" name="household-size" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                                                        <option value="1">1 person</option>
+                                                        <option value="2">2 people</option>
+                                                        <option value="3">3 people</option>
+                                                        <option value="4">4 people</option>
+                                                        <option value="5">5+ people</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div>
+                                                    <label for="region" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Region</label>
+                                                    <select id="region" name="region" class="mt-1 block w-full py-2 px-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white bg-white rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                                                        <option value="northeast">Northeast</option>
+                                                        <option value="midwest">Midwest</option>
+                                                        <option value="south">South</option>
+                                                        <option value="west">West</option>
+                                                        <option value="pacific">Pacific</option>
+                                                        <option value="other">Other</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div>
+                                                    <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                        Calculate Carbon Footprint
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Results Section (initially hidden) -->
+                            <div id="results-section" class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hidden">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">Your Carbon Footprint</h2>
+                                    
+                                    <div class="mt-6">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Carbon Score</h3>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400">Based on your household data</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <span id="carbon-score" class="text-4xl font-bold text-green-600 dark:text-green-400">0</span>
+                                                <span class="text-lg text-gray-500 dark:text-gray-400">tons CO₂e/year</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-6">
+                                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Compared to average household in your region</h4>
+                                            <div class="mt-2 relative pt-1">
+                                                <div class="overflow-hidden h-2 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                                    <div id="carbon-comparison" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500" style="width: 50%"></div>
+                                                </div>
+                                                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                    <span>Better</span>
+                                                    <span>Average</span>
+                                                    <span>Worse</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-8">
+                                            <h3 class="text-md font-medium text-gray-900 dark:text-white">Breakdown by Category</h3>
+                                            <div class="mt-4 h-64">
+                                                <canvas id="carbon-chart"></canvas>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-8">
+                                            <h3 class="text-md font-medium text-gray-900 dark:text-white">Personalized Recommendations</h3>
+                                            <ul id="recommendations" class="mt-4 space-y-4">
+                                                <!-- Recommendations will be populated by JavaScript -->
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="mt-8">
+                                            <button id="save-results-btn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                Save Results
+                                            </button>
+                                            <button id="share-results-btn" class="ml-3 inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                Share Results
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Tips Section -->
+                            <div class="lg:col-span-2 bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                                <div class="px-4 py-5 sm:p-6">
+                                    <h2 class="text-lg font-medium text-gray-900 dark:text-white">Quick Tips to Reduce Your Carbon Footprint</h2>
+                                    
+                                    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                        <div class="bg-green-50 dark:bg-green-900 overflow-hidden shadow rounded-lg">
+                                            <div class="px-4 py-5 sm:p-6">
+                                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Energy Efficiency</h3>
+                                                <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Switch to LED light bulbs</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Unplug electronics when not in use</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Install a programmable thermostat</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Seal air leaks around windows and doors</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-blue-50 dark:bg-blue-900 overflow-hidden shadow rounded-lg">
+                                            <div class="px-4 py-5 sm:p-6">
+                                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Water Conservation</h3>
+                                                <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Fix leaky faucets and toilets</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Install low-flow showerheads</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Collect rainwater for gardening</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Take shorter showers</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-yellow-50 dark:bg-yellow-900 overflow-hidden shadow rounded-lg">
+                                            <div class="px-4 py-5 sm:p-6">
+                                                <h3 class="text-md font-medium text-gray-900 dark:text-white">Waste Reduction</h3>
+                                                <ul class="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Compost food scraps</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Use reusable shopping bags</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Buy in bulk to reduce packaging</span>
+                                                    </li>
+                                                    <li class="flex items-start">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                                        </svg>
+                                                        <span class="ml-2">Repair items instead of replacing them</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // User menu toggle
+        document.getElementById('user-menu-button').addEventListener('click', function() {
+            document.getElementById('user-menu').classList.toggle('hidden');
+        });
+
+        // File upload handling
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                // Show processing status
+                document.getElementById('upload-status').classList.remove('hidden');
+                
+                // In a real application, this would upload the file to a server for OCR processing
+                // For demo purposes, we'll simulate processing after a delay
+                setTimeout(function() {
+                    document.getElementById('upload-status').classList.add('hidden');
+                    
+                    // Populate form with "detected" values
+                    document.getElementById('electricity').value = '750';
+                    document.getElementById('natural-gas').value = '50';
+                    document.getElementById('water').value = '3000';
+                    
+                    // Calculate and show results
+                    calculateCarbonFootprint();
+                }, 2000);
+            }
+        });
+
+        // Form submission
+        document.getElementById('carbon-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateCarbonFootprint();
+        });
+
+        // Carbon footprint calculation
+        function calculateCarbonFootprint() {
+            // Get form values
+            const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            const naturalGas = parseFloat(document.getElementById('natural-gas').value) || 0;
+            const water = parseFloat(document.getElementById('water').value) || 0;
+            const waste = parseFloat(document.getElementById('waste').value) || 0;
+            const transportation = parseFloat(document.getElementById('transportation').value) || 0;
+            const householdSize = parseInt(document.getElementById('household-size').value);
+            const region = document.getElementById('region').value;
+            
+            // Simple calculation (in a real app, this would be more sophisticated)
+            const electricityEmissions = electricity * 0.0005; // tons CO2e per kWh
+            const naturalGasEmissions = naturalGas * 0.005; // tons CO2e per therm
+            const waterEmissions = water * 0.0000018; // tons CO2e per gallon
+            const wasteEmissions = waste * 0.0005 * 52; // tons CO2e per lb per year
+            const transportationEmissions = transportation * 0.0004 * 52; // tons CO2e per mile per year
+            
+            const totalEmissions = electricityEmissions + naturalGasEmissions + waterEmissions + wasteEmissions + transportationEmissions;
+            const perPersonEmissions = totalEmissions / householdSize;
+            
+            // Update the results
+            document.getElementById('carbon-score').textContent = totalEmissions.toFixed(2);
+            
+            // Compare to average (simplified)
+            let averageEmissions = 16; // US average tons CO2e per household
+            if (region === 'northeast') averageEmissions = 14;
+            if (region === 'midwest') averageEmissions = 18;
+            if (region === 'south') averageEmissions = 17;
+            if (region === 'west') averageEmissions = 13;
+            if (region === 'pacific') averageEmissions = 12;
+            
+            const comparisonPercentage = (totalEmissions / averageEmissions) * 50;
+            document.getElementById('carbon-comparison').style.width = `${comparisonPercentage}%`;
+            
+            // Generate personalized recommendations
+            generateRecommendations({
+                electricity: electricity,
+                naturalGas: naturalGas,
+                water: water,
+                waste: waste,
+                transportation: transportation,
+                region: region
+            });
+            
+            // Create chart
+            createChart({
+                electricity: electricityEmissions,
+                naturalGas: naturalGasEmissions,
+                water: waterEmissions,
+                waste: wasteEmissions,
+                transportation: transportationEmissions
+            });
+            
+            // Show results section
+            document.getElementById('results-section').classList.remove('hidden');
+        }
+
+        // Generate recommendations based on input data
+        function generateRecommendations(data) {
+            const recommendations = [];
+            
+            if (data.electricity > 500) {
+                recommendations.push('Consider switching to energy-efficient appliances to reduce your electricity consumption.');
+            }
+            
+            if (data.naturalGas > 40) {
+                recommendations.push('Improve home insulation to reduce heating needs and natural gas usage.');
+            }
+            
+            if (data.water > 2500) {
+                recommendations.push('Install water-efficient fixtures to reduce water consumption.');
+            }
+            
+            if (data.waste > 20) {
+                recommendations.push('Start composting food waste to reduce your household waste.');
+            }
+            
+            if (data.transportation > 100) {
+                recommendations.push('Consider carpooling, public transit, or biking for some trips to reduce transportation emissions.');
+            }
+            
+            // Add region-specific recommendation
+            if (data.region === 'west' || data.region === 'pacific') {
+                recommendations.push('Look into solar panel installation, which is particularly effective in your sunny region.');
+            } else if (data.region === 'midwest') {
+                recommendations.push('Consider wind energy options, which are increasingly available in your region.');
+            }
+            
+            // Display recommendations
+            const recommendationsContainer = document.getElementById('recommendations');
+            recommendationsContainer.innerHTML = '';
+            
+            recommendations.forEach(recommendation => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start';
+                li.innerHTML = `
+                    <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="ml-2">${recommendation}</span>
+                `;
+                recommendationsContainer.appendChild(li);
+            });
+        }
+
+        // Create chart for carbon breakdown
+        function createChart(data) {
+            const ctx = document.getElementById('carbon-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.carbonChart) {
+                window.carbonChart.destroy();
+            }
+            
+            window.carbonChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Electricity', 'Natural Gas', 'Water', 'Waste', 'Transportation'],
+                    datasets: [{
+                        data: [
+                            data.electricity,
+                            data.naturalGas,
+                            data.water,
+                            data.waste,
+                            data.transportation
+                        ],
+                        backgroundColor: [
+                            '#10B981', // green-500
+                            '#3B82F6', // blue-500
+                            '#06B6D4', // cyan-500
+                            '#F59E0B', // amber-500
+                            '#6366F1'  // indigo-500
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: document.documentElement.classList.contains('dark') ? 'white' : 'black',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: document.documentElement.classList.contains('dark') ? '#374151' : 'white',
+                            titleColor: document.documentElement.classList.contains('dark') ? 'white' : 'black',
+                            bodyColor: document.documentElement.classList.contains('dark') ? 'white' : 'black',
+                            borderColor: document.documentElement.classList.contains('dark') ? '#4B5563' : '#E5E7EB',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    return `${context.label}: ${value.toFixed(2)} tons CO₂e/year`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Save results button
+        document.getElementById('save-results-btn').addEventListener('click', function() {
+            alert('Your carbon footprint results have been saved to your profile!');
+        });
+
+        // Share results button
+        document.getElementById('share-results-btn').addEventListener('click', function() {
+            alert('Share functionality would be implemented here with social media integration.');
+        });
+
+        // Initialize theme toggle
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+
+        // Set initial theme based on system preference or localStorage
+        if (localStorage.getItem('color-theme') === 'dark' || 
+            (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        // Toggle theme when button is clicked
+        themeToggleBtn.addEventListener('click', function() {
+            // Toggle icons
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            
+            // Toggle dark class on html element
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+            
+            // If chart exists, update its colors
+            if (window.carbonChart) {
+                window.carbonChart.options.plugins.legend.labels.color = 
+                    document.documentElement.classList.contains('dark') ? 'white' : 'black';
+                window.carbonChart.update();
+            }
+        });
+    </script>
+</body>
+</html>
