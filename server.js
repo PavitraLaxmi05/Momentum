@@ -65,12 +65,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Sanitize data against NoSQL query injection
-app.use(mongoSanitize({
-  replaceWith: '_',
-  onSanitize: ({ req, key }) => {
-    console.warn(`This request[${key}] is sanitized`, req.originalUrl);
-  }
-}));
+// Custom sanitization to avoid mutating req.query
+app.use((req, res, next) => {
+  // Sanitize body and params only
+  req.body = mongoSanitize.sanitize(req.body);
+  req.params = mongoSanitize.sanitize(req.params);
+  // skip req.query
+  next();
+});
+
+
 
 app.use(fileUpload({
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max file size
