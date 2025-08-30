@@ -6,8 +6,12 @@
     <title>Momentum - Sustainability Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <link rel="stylesheet" href="css/wisdomBot.css">
+    <script src="js/chart.min.js"></script>
+    <script src="js/fuse.min.js"></script>
+    
+
+
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Navigation Bar -->
@@ -28,6 +32,10 @@
                         <a href="pages/signup.html" class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Sign Up
                         </a>
+                        <a href="#" id="open-wisdom-bot" class="border-transparent text-green-600 dark:text-green-400 hover:border-green-300 hover:text-green-700 dark:hover:text-green-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Wisdom Bot
+                        </a>
+
                     </div>
                 </div>
                 <div class="flex items-center">
@@ -74,7 +82,7 @@
             </div>
         </div>
         <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-            <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80" alt="Sustainable landscape">
+            <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="Momen/hero.jpg" alt="Sustainable landscape">
         </div>
     </div>
 
@@ -218,7 +226,8 @@
             <p class="mt-8 text-center text-base text-gray-400">&copy; 2023 Momentum. All rights reserved.</p>
         </div>
     </footer>
-
+    <script src="js/libs/markdown-it.min.js"></script>
     <script src="js/main.js"></script>
+    <script type="module" src="js/wisdomBot.js"></script>
 </body>
 </html>

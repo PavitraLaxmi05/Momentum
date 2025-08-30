@@ -30,6 +30,25 @@ const { errorHandler } = require('./middleware/error.middleware');
 // Create Express app
 const app = express();
 
+// Add session management
+const session = require('express-session');
+const uuid = require('uuid');
+app.use(session({
+  genid: () => uuid.v4(),
+  secret: process.env.SESSION_SECRET || 'momentum_wisdom_secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false, httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }
+}));
+
+// Add request logging
+const morgan = require('morgan');
+app.use(morgan('dev'));
+
+// Add XSS protection
+const xss = require('xss-clean');
+app.use(xss());
+
 // Set security HTTP headers
 app.disable('x-powered-by'); // Reduce fingerprinting
 
@@ -93,6 +112,8 @@ const carbonRoutes = require('./routes/carbon.routes');
 const ecobotRoutes = require('./routes/ecobot.routes');
 const productRoutes = require('./routes/product.routes');
 
+const wisdomBotRoutes = require('./routes/wisdomBot.routes');
+
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -100,6 +121,8 @@ app.use('/api/ideas', ideaRoutes);
 app.use('/api/carbon', carbonRoutes);
 app.use('/api/ecobot', ecobotRoutes);
 app.use('/api/products', productRoutes);
+
+app.use('/api/wisdom', wisdomBotRoutes);
 
 // Serve index.html for the root route
 app.get('/', (req, res) => {

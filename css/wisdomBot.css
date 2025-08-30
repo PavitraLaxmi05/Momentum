@@ -1,0 +1,36 @@
+/* Wisdom Bot Chat Widget Styles - matches existing theme */
+#wisdom-bot-chat {
+  font-family: inherit;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+#wisdom-bot-chat:focus-within {
+  box-shadow: 0 8px 32px rgba(34,197,94,0.18);
+  transform: scale(1.01);
+}
+#wisdom-bot-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e #f3f4f6;
+}
+#wisdom-bot-messages::-webkit-scrollbar {
+  width: 6px;
+}
+#wisdom-bot-messages::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 3px;
+}
+#wisdom-bot-messages::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+#wisdom-bot-input:focus {
+  border: 1px solid #22c55e;
+  outline: none;
+}
+@media (max-width: 500px) {
+  #wisdom-bot-chat {
+    right: 2vw;
+    bottom: 2vw;
+    width: 95vw;
+    max-width: 95vw;
+  }
+}
