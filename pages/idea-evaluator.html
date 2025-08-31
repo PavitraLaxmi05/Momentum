@@ -322,99 +322,84 @@
                             </div>
                         </div>
 
-                        <!-- Evaluation Results (hidden initially) -->
+                       <!-- Evaluation Results (hidden initially) -->
                         <div id="evaluation-results" class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg hidden">
-                            <div class="px-4 py-5 sm:px-6">
-                                <h2 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Evaluation Results</h2>
-                                <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">AI-powered assessment of your sustainability idea.</p>
-                            </div>
-                            <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
-                                <div class="mb-6">
-                                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Overall Score</h3>
-                                    <div class="relative pt-1">
-                                        <div class="flex mb-2 items-center justify-between">
-                                            <div>
-                                                <span id="score-value" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-white bg-green-600">85/100</span>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="text-xs font-semibold inline-block text-green-600 dark:text-green-400">Excellent</span>
-                                            </div>
-                                        </div>
-                                        <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
-                                            <div id="score-bar" style="width: 85%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-6">
-                                    <div>
-                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Environmental Impact</h3>
-                                        <div class="relative pt-1">
-                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
-                                                <div style="width: 90%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-                                            </div>
-                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">High positive impact on environment</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Feasibility</h3>
-                                        <div class="relative pt-1">
-                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
-                                                <div style="width: 75%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-                                            </div>
-                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Moderately feasible with some challenges</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Cost Efficiency</h3>
-                                        <div class="relative pt-1">
-                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
-                                                <div style="width: 80%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-                                            </div>
-                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Good return on investment</span>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Scalability</h3>
-                                        <div class="relative pt-1">
-                                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
-                                                <div style="width: 85%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
-                                            </div>
-                                            <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">Highly scalable solution</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-6">
-                                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Detailed Feedback</h3>
-                                    <div class="bg-gray-50 dark:bg-gray-700 rounded-md p-4">
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3" id="feedback-text">
-                                            Your idea shows excellent potential for positive environmental impact. The approach to reducing waste through innovative recycling methods is particularly noteworthy. 
-                                        </p>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                                            <strong>Strengths:</strong> Innovative approach, addresses a clear environmental need, reasonable implementation cost, potential for community engagement.
-                                        </p>
-                                        <p class="text-sm text-gray-700 dark:text-gray-300">
-                                            <strong>Areas for improvement:</strong> Consider partnerships with local businesses to enhance scalability. The timeline might be optimistic given regulatory requirements. Additional research on similar initiatives could strengthen your implementation plan.
-                                        </p>
-                                    </div>
-                                </div>
-
+                        <div class="px-4 py-5 sm:px-6">
+                            <h2 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Evaluation Results</h2>
+                            <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">AI-powered assessment of your sustainability idea.</p>
+                        </div>
+                        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
+                            <div class="mb-6">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Overall Score</h3>
+                            <div class="relative pt-1">
+                                <div class="flex mb-2 items-center justify-between">
                                 <div>
-                                    <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Next Steps</h3>
-                                    <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300">
-                                        <li class="mb-1">Refine your implementation plan with the suggested improvements</li>
-                                        <li class="mb-1">Research potential funding sources and partnerships</li>
-                                        <li class="mb-1">Develop a more detailed budget and timeline</li>
-                                        <li>Consider a small-scale pilot to test your concept</li>
-                                    </ul>
+                                    <span id="score-value" class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-white bg-green-600">0/100</span>
                                 </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-semibold inline-block text-green-600 dark:text-green-400">Pending</span>
+                                </div>
+                                </div>
+                                <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                <div id="score-bar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <!-- New grid for Environmental Impact, Feasibility, and Innovation -->
+                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-6">
+                            <div>
+                                <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Environmental Impact</h3>
+                                <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                    <div id="impact-score-bar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                </div>
+                                <span id="impact-score" class="text-xs font-semibold text-gray-700 dark:text-gray-300">Awaiting evaluation</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Feasibility</h3>
+                                <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                    <div id="feasibility-score-bar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                </div>
+                                <span id="feasibility-score" class="text-xs font-semibold text-gray-700 dark:text-gray-300">Awaiting evaluation</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Innovation</h3>
+                                <div class="relative pt-1">
+                                <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200 dark:bg-gray-700">
+                                    <div id="innovation-score-bar" style="width: 0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-green-500"></div>
+                                </div>
+                                <span id="innovation-score" class="text-xs font-semibold text-gray-700 dark:text-gray-300">Awaiting evaluation</span>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="mb-6">
+                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Detailed Feedback</h3>
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-md p-4">
+                                <p class="text-sm text-gray-700 dark:text-gray-300 mb-3" id="feedback-text">
+                                Awaiting evaluation feedback.
+                                </p>
+                                <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                                <strong>Strengths:</strong> Awaiting evaluation.
+                                </p>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">
+                                <strong>Areas for improvement:</strong> Awaiting evaluation.
+                                </p>
+                            </div>
+                            </div>
+
+                            <div>
+                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Next Steps</h3>
+                            <ul class="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300">
+                                <li class="mb-1">Awaiting evaluation to provide next steps.</li>
+                            </ul>
                             </div>
                         </div>
-
+                        </div>
                         <!-- Previous Ideas Section -->
                         <div class="mt-8 bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
                             <div class="px-4 py-5 sm:px-6">
@@ -545,23 +530,98 @@
     <script src="/js/fuse.min.js"></script>
     <script src="../js/main.js"></script>
     <script>
+        // Check if user is authenticated
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '../pages/login.html';
+                return false;
+            }
+            return token;
+        }
+
         // Form submission handling
-        document.getElementById('idea-form').addEventListener('submit', function(e) {
+        document.getElementById('idea-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // In a real application, this would send data to a backend API
-            // For demo purposes, we'll just show the evaluation results
-            document.getElementById('evaluation-results').classList.remove('hidden');
+            const token = checkAuth();
+            if (!token) return;
             
-            // Scroll to results
-            document.getElementById('evaluation-results').scrollIntoView({ behavior: 'smooth' });
-            
-            // Update feedback text based on form input
+            // Get form data
             const ideaTitle = document.getElementById('idea-title').value;
+            const ideaDescription = document.getElementById('idea-description').value;
             const ideaCategory = document.getElementById('idea-category').value;
-            const feedbackText = document.getElementById('feedback-text');
+            const implementationCost = document.getElementById('implementation-cost').value; // Corrected ID
+            const timeToImplement = document.getElementById('implementation-time').value; // Corrected ID
+            const ideaBenefits = document.getElementById('idea-benefits').value;
+            const ideaChallenges = document.getElementById('idea-challenges').value;
             
-            feedbackText.textContent = `Your idea "${ideaTitle}" in the ${document.getElementById('idea-category').options[document.getElementById('idea-category').selectedIndex].text} category shows excellent potential for positive environmental impact. The approach is innovative and addresses important sustainability challenges.`;
+            // Create idea object
+            const ideaData = {
+                title: ideaTitle,
+                description: ideaDescription,
+                category: ideaCategory,
+                implementationCost: implementationCost,
+                timeToImplement: timeToImplement,
+                benefits: ideaBenefits,
+                challenges: ideaChallenges
+            };
+            
+            try {
+                // First create the idea
+                console.log('Submitting ideaData:', ideaData);
+                const createResponse = await fetch('/api/ideas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(ideaData)
+                });
+                
+                if (!createResponse.ok) {
+                    const errorData = await createResponse.json();
+                    throw new Error(`Failed to create idea: ${errorData.error || 'Unknown error'}`);
+                }
+                
+                const createResult = await createResponse.json();
+                const ideaId = createResult.data._id;
+                
+                // Then evaluate the idea
+                const evaluateResponse = await fetch(`/api/ideas/${ideaId}/evaluate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!evaluateResponse.ok) {
+                    throw new Error('Failed to evaluate idea');
+                }
+                
+                const evaluateResult = await evaluateResponse.json();
+                const evaluation = evaluateResult.data;
+                
+                // Show evaluation results
+                document.getElementById('evaluation-results').classList.remove('hidden');
+                
+                // Update UI with evaluation results
+                document.getElementById('overall-score-value').textContent = 
+                    Math.round((evaluation.potentialImpact + evaluation.feasibilityScore + evaluation.innovationScore) / 3);
+                
+                document.getElementById('impact-score').textContent = evaluation.potentialImpact;
+                document.getElementById('feasibility-score').textContent = evaluation.feasibilityScore;
+                document.getElementById('innovation-score').textContent = evaluation.innovationScore;
+                
+                document.getElementById('feedback-text').textContent = evaluation.feedback;
+                
+                // Scroll to results
+                document.getElementById('evaluation-results').scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while evaluating your idea. Please try again.');
+            }
         });
         
         // Mobile menu toggle

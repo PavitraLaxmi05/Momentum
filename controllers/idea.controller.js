@@ -1,7 +1,7 @@
 const Idea = require('../models/idea.model');
 const { ErrorResponse } = require('../middleware/error.middleware');
 const OpenAI = require('openai');
-
+console.log('OpenAI response:', evaluationText);
 // Initialize OpenAI API
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -159,9 +159,10 @@ exports.evaluateIdea = async (req, res, next) => {
 Idea Title: ${idea.title}
 Description: ${idea.description}
 Category: ${idea.category}
-Target Audience: ${idea.targetAudience || 'Not specified'}
 Implementation Cost: ${idea.implementationCost}
 Time to Implement: ${idea.timeToImplement}
+Benefits: ${idea.benefits}
+Challenges: ${idea.challenges || 'Not specified'}
 
 Please provide your evaluation in the following JSON format:
 {
@@ -171,16 +172,25 @@ Please provide your evaluation in the following JSON format:
   "feedback": "[detailed feedback]"
 }`;
 
-    // Call OpenAI API
-    const response = await openai.completions.create({
-      model: "gpt-3.5-turbo-instruct",
-      prompt: prompt,
+    // Call OpenAI API using chat completions (newer API)
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a sustainability expert who evaluates ideas based on their potential environmental impact, feasibility, and innovation. Provide detailed, constructive feedback."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
       max_tokens: 500,
       temperature: 0.7,
     });
 
     // Parse the response
-    const evaluationText = response.choices[0].text.trim();
+    const evaluationText = response.choices[0].message.content.trim();
     let evaluation;
     
     try {

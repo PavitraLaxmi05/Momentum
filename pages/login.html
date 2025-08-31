@@ -65,7 +65,7 @@
                     <a href="signup.html" class="font-medium text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300">create a new account</a>
                 </p>
             </div>
-            <form class="mt-8 space-y-6" action="../pages/dashboard.html" method="GET">
+            <form id="login-form" class="mt-8 space-y-6">
                 <input type="hidden" name="remember" value="true">
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>
@@ -93,7 +93,13 @@
                     </div>
                 </div>
 
-                <div>
+                <div id="login-error" class="text-red-500 text-sm hidden"></div>
+
+                <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    New to Momentum? <a href="signup.html" class="font-medium text-green-600 hover:text-green-500">Sign up for an account</a>
+                </div>
+
+                <div class="mt-4">
                     <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                             <svg class="h-5 w-5 text-green-500 group-hover:text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -171,5 +177,49 @@
     </footer>
 
     <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email-address').value;
+                const password = document.getElementById('password').value;
+                
+                try {
+                    console.log('Attempting login with email:', email);
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Store token in localStorage
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        
+                        // Redirect to dashboard
+                        window.location.href = '../pages/dashboard.html';
+                    } else {
+                        // Show error message
+                        loginError.textContent = data.message || 'Login failed. Please check your credentials or sign up if you don\'t have an account.';
+                        loginError.classList.remove('hidden');
+                        console.log('Login failed:', data);
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    loginError.textContent = 'An error occurred during login. Please try again.';
+                    loginError.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -62,8 +62,22 @@ app.use(cors({
   maxAge: 86400 // 24 hours
 }));
 
-// Security middleware
-app.use(helmet());
+// Security middleware with custom CSP to allow inline scripts and external resources
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "*.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "*.jsdelivr.net"],
+      imgSrc: ["'self'", "data:", "images.unsplash.com", "*.unsplash.com"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'", "cdn.jsdelivr.net", "*.jsdelivr.net"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+}));
 
 // Rate limiting
 const apiLimiter = rateLimit({
