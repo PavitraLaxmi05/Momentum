@@ -546,6 +546,7 @@
             
             const token = checkAuth();
             if (!token) return;
+            console.log('Token:', token);
             
             // Get form data
             const ideaTitle = document.getElementById('idea-title').value;
@@ -596,7 +597,8 @@
                 });
                 
                 if (!evaluateResponse.ok) {
-                    throw new Error('Failed to evaluate idea');
+                    const errorData = await evaluateResponse.json();
+                    throw new Error(`Failed to evaluate idea: ${errorData.error || 'Unknown error'}`);
                 }
                 
                 const evaluateResult = await evaluateResponse.json();
@@ -604,14 +606,21 @@
                 
                 // Show evaluation results
                 document.getElementById('evaluation-results').classList.remove('hidden');
-                
+      
                 // Update UI with evaluation results
-                document.getElementById('overall-score-value').textContent = 
-                    Math.round((evaluation.potentialImpact + evaluation.feasibilityScore + evaluation.innovationScore) / 3);
+                document.getElementById('score-value').textContent = 
+                    `${Math.round((evaluation.potentialImpact + evaluation.feasibilityScore + evaluation.innovationScore) / 3)}/100`;
+                document.getElementById('score-bar').style.width = 
+                    `${Math.round((evaluation.potentialImpact + evaluation.feasibilityScore + evaluation.innovationScore) / 3)}%`;
                 
-                document.getElementById('impact-score').textContent = evaluation.potentialImpact;
-                document.getElementById('feasibility-score').textContent = evaluation.feasibilityScore;
-                document.getElementById('innovation-score').textContent = evaluation.innovationScore;
+                // Update individual scores (ensure these IDs exist in your HTML)
+                const impactScore = document.getElementById('impact-score');
+                const feasibilityScore = document.getElementById('feasibility-score');
+                const innovationScore = document.getElementById('innovation-score');
+                
+                if (impactScore) impactScore.textContent = evaluation.potentialImpact;
+                if (feasibilityScore) feasibilityScore.textContent = evaluation.feasibilityScore;
+                if (innovationScore) innovationScore.textContent = evaluation.innovationScore;
                 
                 document.getElementById('feedback-text').textContent = evaluation.feedback;
                 
@@ -620,7 +629,7 @@
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while evaluating your idea. Please try again.');
+                alert('An error occurred while evaluating your idea. Please try again.: ${error.message}');
             }
         });
         

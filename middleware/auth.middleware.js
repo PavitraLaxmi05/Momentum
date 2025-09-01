@@ -1,50 +1,30 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user.model');
+const { ErrorResponse } = require('./error.middleware');
 
 /**
- * Authentication middleware to protect routes
- * Verifies JWT token and attaches user to request object
+ * Authentication middleware to verify JWT token
+ * @description Verifies JWT token and attaches decoded user data to req.user
  */
-exports.protect = async (req, res, next) => {
+const protect = async (req, res, next) => {
+  let token;
+
+  // Check for token in Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(new ErrorResponse('No token provided, authorization denied', 401));
+  }
+
   try {
-    let token;
-    
-    // Check if token exists in Authorization header
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
-    }
-    
-    // Check if token exists
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to access this route'
-      });
-    }
-    
-    try {
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Attach user to request object
-      req.user = await User.findById(decoded.id);
-      
-      if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          message: 'User not found'
-        });
-      }
-      
-      next();
-    } catch (error) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to access this route'
-      });
-    }
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // { id: userId, role: userRole }
+    next();
   } catch (error) {
-    next(error);
+    console.error('JWT verification error:', error.message, error.stack);
+    return next(new ErrorResponse('Invalid token, authorization denied', 401));
   }
 };
 
@@ -52,22 +32,18 @@ exports.protect = async (req, res, next) => {
  * Role-based authorization middleware
  * @param {...String} roles - Roles allowed to access the route
  */
-exports.authorize = (...roles) => {
+const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to access this route'
-      });
+      return next(new ErrorResponse('Not authorized to access this route', 401));
     }
-    
+
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: `User role ${req.user.role} is not authorized to access this route`
-      });
+      return next(new ErrorResponse(`User role ${req.user.role} is not authorized to access this route`, 403));
     }
-    
+
     next();
   };
 };
+
+module.exports = { protect, authorize };

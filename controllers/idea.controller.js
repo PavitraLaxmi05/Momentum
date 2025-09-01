@@ -1,11 +1,10 @@
 const Idea = require('../models/idea.model');
 const { ErrorResponse } = require('../middleware/error.middleware');
-const OpenAI = require('openai');
-console.log('OpenAI response:', evaluationText);
-// Initialize OpenAI API
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Initialize Gemini API
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 /**
  * Get all ideas
@@ -22,6 +21,7 @@ exports.getIdeas = async (req, res, next) => {
       data: ideas
     });
   } catch (error) {
+    console.error('Get ideas error:', error.message, error.stack);
     next(error);
   }
 };
@@ -49,6 +49,7 @@ exports.getIdea = async (req, res, next) => {
       data: idea
     });
   } catch (error) {
+    console.error('Get idea error:', error.message, error.stack);
     next(error);
   }
 };
@@ -60,8 +61,14 @@ exports.getIdea = async (req, res, next) => {
  */
 exports.createIdea = async (req, res, next) => {
   try {
+    // Verify req.user exists
+    if (!req.user || !req.user.id) {
+      return next(new ErrorResponse('User not authenticated', 401));
+    }
+    
     // Add user to request body
     req.body.user = req.user.id;
+    console.log('Creating idea with data:', req.body);
     
     const idea = await Idea.create(req.body);
     
@@ -70,7 +77,12 @@ exports.createIdea = async (req, res, next) => {
       data: idea
     });
   } catch (error) {
-    next(error);
+    console.error('Create idea error:', error.message, error.stack);
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return next(new ErrorResponse(`Validation failed: ${messages.join(', ')}`, 400));
+    }
+    next(new ErrorResponse(`Failed to create idea: ${error.message}`, 500));
   }
 };
 
@@ -102,6 +114,7 @@ exports.updateIdea = async (req, res, next) => {
       data: idea
     });
   } catch (error) {
+    console.error('Update idea error:', error.message, error.stack);
     next(error);
   }
 };
@@ -131,12 +144,13 @@ exports.deleteIdea = async (req, res, next) => {
       data: {}
     });
   } catch (error) {
+    console.error('Delete idea error:', error.message, error.stack);
     next(error);
   }
 };
 
 /**
- * Evaluate idea using OpenAI
+ * Evaluate idea using Gemini API
  * @route POST /api/ideas/:id/evaluate
  * @access Private
  */
@@ -153,7 +167,7 @@ exports.evaluateIdea = async (req, res, next) => {
       return next(new ErrorResponse(`User not authorized to evaluate this idea`, 401));
     }
     
-    // Prepare prompt for OpenAI
+    // Prepare prompt for Gemini
     const prompt = `Evaluate the following sustainability idea and provide scores (0-10) for potential impact, feasibility, and innovation. Also provide detailed feedback.
 
 Idea Title: ${idea.title}
@@ -166,59 +180,100 @@ Challenges: ${idea.challenges || 'Not specified'}
 
 Please provide your evaluation in the following JSON format:
 {
-  "potentialImpact": [score],
-  "feasibilityScore": [score],
-  "innovationScore": [score],
-  "feedback": "[detailed feedback]"
+  "potentialImpact": number,
+  "feasibilityScore": number,
+  "innovationScore": number,
+  "feedback": "string"
 }`;
 
-    // Call OpenAI API using chat completions (newer API)
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a sustainability expert who evaluates ideas based on their potential environmental impact, feasibility, and innovation. Provide detailed, constructive feedback."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      max_tokens: 500,
-      temperature: 0.7,
-    });
-
-    // Parse the response
-    const evaluationText = response.choices[0].message.content.trim();
-    let evaluation;
-    
+    // Call Gemini API with error handling
+    let result;
     try {
-      // Extract JSON from the response
-      const jsonMatch = evaluationText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        evaluation = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('Could not parse evaluation');
+      result = await model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          maxOutputTokens: 500,
+          temperature: 0.7
+        }
+      });
+    } catch (apiError) {
+      console.error('Gemini API error:', apiError.message, apiError.stack);
+      return next(new ErrorResponse(`Gemini API error: ${apiError.message}`, 500));
+    }
+
+    // Log the raw response for debugging
+    const evaluationText = result.response.text().trim();
+    console.log('Gemini response:', evaluationText);
+
+    let evaluation;
+    try {
+      // Extract JSON from the response, handling markdown or plain JSON
+      const jsonMatch = evaluationText.match(/\{[\s\S]*\}/) || evaluationText.match(/```json\n([\s\S]*?)\n```/);
+      if (!jsonMatch) {
+        throw new Error('Could not parse evaluation response');
+      }
+
+      const jsonString = jsonMatch[0] || jsonMatch[1];
+      evaluation = JSON.parse(jsonString);
+
+      // Normalize scores if they are arrays
+      evaluation.potentialImpact = Array.isArray(evaluation.potentialImpact)
+        ? evaluation.potentialImpact[0]
+        : evaluation.potentialImpact;
+      evaluation.feasibilityScore = Array.isArray(evaluation.feasibilityScore)
+        ? evaluation.feasibilityScore[0]
+        : evaluation.feasibilityScore;
+      evaluation.innovationScore = Array.isArray(evaluation.innovationScore)
+        ? evaluation.innovationScore[0]
+        : evaluation.innovationScore;
+
+      // Sanitize feedback to replace newlines and other control characters
+      evaluation.feedback = evaluation.feedback.replace(/[\n\r\t]+/g, ' ').trim();
+
+      // Validate evaluation structure
+      if (evaluation.potentialImpact === undefined || evaluation.feasibilityScore === undefined || 
+          evaluation.innovationScore === undefined || !evaluation.feedback) {
+        throw new Error('Incomplete evaluation response');
+      }
+      
+      // Truncate feedback if it's too long (over 1000 characters)
+      if (evaluation.feedback && evaluation.feedback.length > 1000) {
+        evaluation.feedback = evaluation.feedback.substring(0, 997) + '...';
       }
     } catch (parseError) {
-      return next(new ErrorResponse('Failed to parse evaluation results', 500));
+      console.error('Evaluation parsing error:', parseError.message, parseError.stack);
+      return next(new ErrorResponse(`Failed to parse evaluation results: ${parseError.message}`, 500));
     }
     
     // Update idea with evaluation results
-    idea.potentialImpact = evaluation.potentialImpact;
-    idea.feasibilityScore = evaluation.feasibilityScore;
-    idea.innovationScore = evaluation.innovationScore;
-    idea.feedback = evaluation.feedback;
-    idea.status = 'evaluated';
-    
-    await idea.save();
+    try {
+      idea.potentialImpact = evaluation.potentialImpact;
+      idea.feasibilityScore = evaluation.feasibilityScore;
+      idea.innovationScore = evaluation.innovationScore;
+      idea.feedback = evaluation.feedback;
+      idea.status = 'evaluated';
+      
+      await idea.save();
+    } catch (saveError) {
+      console.error('Database save error:', saveError.message, saveError.stack);
+      return next(new ErrorResponse(`Failed to save evaluation results: ${saveError.message}`, 500));
+    }
     
     res.status(200).json({
       success: true,
       data: idea
     });
   } catch (error) {
+    console.error('Evaluate idea error:', error.message, error.stack);
     next(error);
   }
 };
