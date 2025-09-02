@@ -201,7 +201,7 @@ function displayUserProfile(user) {
         if (profilePicture) {
             profilePicture.src = user.profilePicture ? 
                 `/uploads/${user.profilePicture}` : 
-                '../images/default-avatar.png';
+                '../public/images/default-avatar.png';
         }
         
         // Format and display creation date
@@ -361,6 +361,10 @@ function updateProfile() {
             }
             
             displayUserProfile(updatedUser);
+            
+            // Update user profile information across all pages
+            loadUserProfileHeader();
+            
             showNotification('Profile updated successfully', 'success');
             
             // Restore button if it exists

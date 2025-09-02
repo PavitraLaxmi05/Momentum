@@ -77,6 +77,8 @@ app.use(helmet({
       frameSrc: ["'none'"],
     },
   },
+  // Disable Cross-Origin Embedder Policy to fix ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep error
+  crossOriginEmbedderPolicy: false
 }));
 
 // Rate limiting
