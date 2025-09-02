@@ -89,6 +89,24 @@ function initializeUI() {
         });
     }
     
+    // Profile picture preview
+    const profilePictureUpload = document.getElementById('profile-picture-upload');
+    const profilePicturePreview = document.getElementById('profile-picture-preview');
+    
+    if (profilePictureUpload && profilePicturePreview) {
+        profilePictureUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profilePicturePreview.src = e.target.result;
+                    profilePicturePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
     // Profile edit form submission
     const profileEditForm = document.getElementById('profile-edit-form');
     if (profileEditForm) {
@@ -178,6 +196,14 @@ function displayUserProfile(user) {
             profileEmail.textContent = user.email || 'Not set';
         }
         
+        // Update profile picture
+        const profilePicture = document.getElementById('profile-picture');
+        if (profilePicture) {
+            profilePicture.src = user.profilePicture ? 
+                `/uploads/${user.profilePicture}` : 
+                '../images/default-avatar.png';
+        }
+        
         // Format and display creation date
         const profileCreated = document.getElementById('profile-created');
         if (profileCreated) {
@@ -236,6 +262,15 @@ function populateEditForm() {
     document.getElementById('last-name').value = user.lastName || '';
     document.getElementById('username').value = user.username || '';
     document.getElementById('email').value = user.email || '';
+    
+    // Update profile picture preview
+    const profilePicturePreview = document.getElementById('profile-picture-preview');
+    if (profilePicturePreview) {
+        profilePicturePreview.src = user.profilePicture ? 
+            `/uploads/${user.profilePicture}` : 
+            '../images/default-avatar.png';
+        profilePicturePreview.classList.remove('hidden');
+    }
 }
 
 /**
@@ -277,17 +312,24 @@ function updateProfile() {
             };
         }
         
+        // Check if there's a profile picture to upload
+        const profilePictureInput = document.getElementById('profile-picture-upload');
+        const formData = new FormData();
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+        formData.append('username', username);
+        
+        if (profilePictureInput && profilePictureInput.files && profilePictureInput.files[0]) {
+            formData.append('profilePicture', profilePictureInput.files[0]);
+        }
+        
         fetch('/api/auth/updateprofile', {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`
+                // Don't set Content-Type when using FormData, browser will set it with boundary
             },
-            body: JSON.stringify({
-                firstName,
-                lastName,
-                username
-            })
+            body: formData
         })
         .then(response => {
             if (!response.ok) {
@@ -322,14 +364,20 @@ function updateProfile() {
             showNotification('Profile updated successfully', 'success');
             
             // Restore button if it exists
-            if (saveButton) restoreButton();
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Save';
+            }
         })
         .catch(error => {
             console.error('Error updating profile:', error);
             showNotification(error.message || 'Failed to update profile. Please try again.', 'error');
             
             // Restore button if it exists
-            if (saveButton) restoreButton();
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Save';
+            }
             
             // If authentication error, redirect to login
             if (error.message.includes('Authentication')) {
@@ -523,11 +571,14 @@ function loadUserIdeas() {
                 loadingElement.remove();
             }
             
-            if (!Array.isArray(data)) {
+            // Check if data is in the expected format
+            const ideas = data.data || data;
+            
+            if (!Array.isArray(ideas)) {
                 throw new Error('Invalid data format received');
             }
             
-            if (data.length === 0) {
+            if (ideas.length === 0) {
                 ideasContainer.innerHTML = `
                     <div class="text-center py-4">
                         <p class="text-gray-500 dark:text-gray-400">You haven't submitted any ideas yet.</p>
@@ -539,11 +590,11 @@ function loadUserIdeas() {
             }
             
             // Sort ideas by creation date (newest first)
-            data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            ideas.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
             // Display ideas
             ideasContainer.innerHTML = '';
-            data.forEach(idea => {
+            ideas.forEach(idea => {
                 try {
                     const ideaElement = createIdeaElement(idea);
                     ideasContainer.appendChild(ideaElement);

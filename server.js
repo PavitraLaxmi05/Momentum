@@ -69,8 +69,8 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "*.jsdelivr.net"],
       styleSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net", "*.jsdelivr.net"],
-      imgSrc: ["'self'", "data:", "images.unsplash.com", "*.unsplash.com"],
-      connectSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "images.unsplash.com", "*.unsplash.com", "*.tile.openstreetmap.org", "a.tile.openstreetmap.org", "b.tile.openstreetmap.org", "c.tile.openstreetmap.org", "blob:"],
+      connectSrc: ["'self'", "*.openstreetmap.org"],
       fontSrc: ["'self'", "cdn.jsdelivr.net", "*.jsdelivr.net"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
@@ -109,14 +109,18 @@ app.use((req, res, next) => {
 
 
 
-app.use(fileUpload({
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max file size
-  useTempFiles: true,
-  tempFileDir: '/tmp/'
-}));
+// Comment out express-fileupload as we're using multer for file uploads
+// app.use(fileUpload({
+//   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max file size
+//   useTempFiles: true,
+//   tempFileDir: '/tmp/'
+// }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, '/')));
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');

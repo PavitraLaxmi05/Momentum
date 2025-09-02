@@ -138,10 +138,19 @@ exports.updateProfile = async (req, res, next) => {
       }
     }
 
+    // Create update object
+    const updateData = { firstName, lastName, username };
+
+    // Handle profile picture upload if present
+    if (req.file) {
+      // Use the full path for the profile picture
+      updateData.profilePicture = `/uploads/${req.file.filename}`;
+    }
+
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { firstName, lastName, username },
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -154,7 +163,10 @@ exports.updateProfile = async (req, res, next) => {
         firstName: updatedUser.firstName,
         lastName: updatedUser.lastName,
         role: updatedUser.role,
-        profilePicture: updatedUser.profilePicture
+        profilePicture: updatedUser.profilePicture,
+        carbonFootprint: updatedUser.carbonFootprint,
+        sustainabilityScore: updatedUser.sustainabilityScore,
+        createdAt: updatedUser.createdAt
       }
     });
   } catch (error) {
