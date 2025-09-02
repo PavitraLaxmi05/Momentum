@@ -190,28 +190,64 @@
                 
                 try {
                     console.log('Attempting login with email:', email);
-                    const response = await fetch('/api/auth/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email, password })
-                    });
                     
-                    const data = await response.json();
+                    // Check if we're in development mode (using local server)
+                    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                     
-                    if (response.ok) {
-                        // Store token in localStorage
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                    if (isDev) {
+                        // In development mode, use mock authentication
+                        console.log('Development mode: Using mock authentication');
+                        
+                        // Simple validation
+                        if (!email || !email.includes('@') || !password || password.length < 6) {
+                            loginError.textContent = 'Invalid email or password. Password must be at least 6 characters.';
+                            loginError.classList.remove('hidden');
+                            return;
+                        }
+                        
+                        // Create mock user data
+                        const mockUser = {
+                            id: 'user_' + Date.now(),
+                            email: email,
+                            username: email.split('@')[0],
+                            fullName: email.split('@')[0],
+                            location: 'San Francisco, CA',
+                            ckc_points: 120,
+                            badges: ['Sustainability Enthusiast', 'Composter'],
+                            profilePicture: '../public/images/default-avatar.png'
+                        };
+                        
+                        // Store mock token and user in localStorage
+                        localStorage.setItem('token', 'mock_token_' + Date.now());
+                        localStorage.setItem('user', JSON.stringify(mockUser));
                         
                         // Redirect to dashboard
                         window.location.href = '../pages/dashboard.html';
                     } else {
-                        // Show error message
-                        loginError.textContent = data.message || 'Login failed. Please check your credentials or sign up if you don\'t have an account.';
-                        loginError.classList.remove('hidden');
-                        console.log('Login failed:', data);
+                        // In production mode, use real API
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ email, password })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            // Store token in localStorage
+                            localStorage.setItem('token', data.token);
+                            localStorage.setItem('user', JSON.stringify(data.user));
+                            
+                            // Redirect to dashboard
+                            window.location.href = '../pages/dashboard.html';
+                        } else {
+                            // Show error message
+                            loginError.textContent = data.message || 'Login failed. Please check your credentials or sign up if you don\'t have an account.';
+                            loginError.classList.remove('hidden');
+                            console.log('Login failed:', data);
+                        }
                     }
                 } catch (error) {
                     console.error('Login error:', error);

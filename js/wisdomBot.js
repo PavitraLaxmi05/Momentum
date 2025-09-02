@@ -66,12 +66,55 @@ const wisdomBotWidget = (() => {
     typingDiv.classList.remove('hidden');
     form.querySelector('button').disabled = true;
     try {
-      const res = await fetch('/api/wisdom/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg })
-      });
-      const data = await res.json();
+      // Check if we're in development mode (using local server)
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      let data;
+      
+      if (isDev) {
+        // In development mode, use mock wisdom responses
+        console.log('Development mode: Using mock wisdom response');
+        
+        // Create mock wisdom responses based on user input
+        const mockResponses = {
+          default: "Wisdom comes to those who seek it with an open heart and mind.",
+          hello: "Greetings, seeker of wisdom. How may I illuminate your path today?",
+          sustainability: "The Earth does not belong to us; we belong to the Earth. What we do to the planet, we do to ourselves.",
+          recycling: "When we reuse what we have, we honor both the past and the future.",
+          climate: "Climate action is not just about saving the planet, but about creating a more just and equitable world for all.",
+          energy: "The most sustainable energy is the energy we don't use. Conservation is the foundation of true sustainability."
+        };
+        
+        // Determine which response to use based on keywords in the user message
+        const lowerMsg = userMsg.toLowerCase();
+        let response = mockResponses.default;
+        
+        if (lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('hey')) {
+          response = mockResponses.hello;
+        } else if (lowerMsg.includes('sustain')) {
+          response = mockResponses.sustainability;
+        } else if (lowerMsg.includes('recycl')) {
+          response = mockResponses.recycling;
+        } else if (lowerMsg.includes('climate') || lowerMsg.includes('warming')) {
+          response = mockResponses.climate;
+        } else if (lowerMsg.includes('energy') || lowerMsg.includes('power')) {
+          response = mockResponses.energy;
+        }
+        
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        data = { success: true, wisdom: response };
+      } else {
+        // In production mode, use real API
+        const res = await fetch('/api/wisdom/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userMsg })
+        });
+        data = await res.json();
+      }
+      
       if (data.success && data.wisdom) {
         chatHistory.push({ sender: 'sage', text: data.wisdom });
         sessionStorage.setItem('wisdomBotHistory', JSON.stringify(chatHistory));

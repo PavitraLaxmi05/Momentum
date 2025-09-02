@@ -299,6 +299,114 @@
                                             <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                                 Create New Trade
                                             </button>
+                                            
+                                            <!-- Create Trade Form (hidden by default) -->
+                                            <div id="create-trade-form" class="mt-6 bg-white dark:bg-gray-700 p-4 rounded-lg shadow hidden">
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Create New Trade</h3>
+                                                <form>
+                                                    <!-- User Profile Information (Read-only) -->
+                                                    <div class="mb-4 border-b border-gray-200 dark:border-gray-600 pb-4">
+                                                        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Your Information</h4>
+                                                        <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
+                                                            <div>
+                                                                <label for="trade-username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
+                                                                <input type="text" name="username" id="trade-username" class="mt-1 block w-full bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" readonly>
+                                                            </div>
+                                                            <div>
+                                                                <label for="trade-fullname" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
+                                                                <input type="text" name="fullname" id="trade-fullname" class="mt-1 block w-full bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" readonly>
+                                                            </div>
+                                                            <div>
+                                                                <label for="trade-location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Location</label>
+                                                                <input type="text" name="location" id="trade-location" class="mt-1 block w-full bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" readonly>
+                                                            </div>
+                                                            <div>
+                                                                <label for="trade-points" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current CKC Points</label>
+                                                                <input type="text" name="points" id="trade-points" class="mt-1 block w-full bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" readonly>
+                                                            </div>
+                                                            <div class="sm:col-span-2">
+                                                                <label for="trade-contact" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Information</label>
+                                                                <input type="text" name="contact" id="trade-contact" class="mt-1 block w-full bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Trade Details -->
+                                                    <div class="mb-4">
+                                                        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Trade Details</h4>
+                                                        <div class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
+                                                            <div class="sm:col-span-2">
+                                                                <label for="trade-category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                                                                <div class="mt-1 flex items-center">
+                                                                    <select id="trade-category" name="category" class="block w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                                                                        <option value="vegetables">Vegetables</option>
+                                                                        <option value="fruits">Fruits</option>
+                                                                        <option value="organic-waste">Organic Waste</option>
+                                                                        <option value="solar-energy">Solar Energy</option>
+                                                                        <option value="homemade-products">Homemade Products</option>
+                                                                        <option value="reusing-materials">Reusing Materials</option>
+                                                                        <option value="saving-water">Saving Water</option>
+                                                                        <option value="other">Other</option>
+                                                                    </select>
+                                                                    <span id="category-points" class="ml-3 text-sm text-green-600 dark:text-green-400">+10 points</span>
+                                                                    <input type="hidden" id="category-points-value" value="10">
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Offerings -->
+                                                            <div class="sm:col-span-2">
+                                                                <div class="flex justify-between items-center">
+                                                                    <label for="offering" class="block text-sm font-medium text-gray-700 dark:text-gray-300">What are you offering?</label>
+                                                                    <button type="button" id="add-offering-btn" class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                                        <svg class="-ml-1 mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                                        </svg>
+                                                                        Add More
+                                                                    </button>
+                                                                </div>
+                                                                <div id="offerings-container" class="mt-1">
+                                                                    <div class="offering-item">
+                                                                        <div class="flex items-center">
+                                                                            <input type="text" name="offering[]" class="flex-1 shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="What are you offering?">
+                                                                            <input type="number" name="offering-points[]" class="ml-2 w-20 shadow-sm focus:ring-green-500 focus:border-green-500 block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Seeking -->
+                                                            <div class="sm:col-span-2">
+                                                                <div class="flex justify-between items-center">
+                                                                    <label for="seeking" class="block text-sm font-medium text-gray-700 dark:text-gray-300">What are you seeking?</label>
+                                                                    <button type="button" id="add-seeking-btn" class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                                        <svg class="-ml-1 mr-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                                        </svg>
+                                                                        Add More
+                                                                    </button>
+                                                                </div>
+                                                                <div id="seeking-container" class="mt-1">
+                                                                    <div class="seeking-item">
+                                                                        <div class="flex items-center">
+                                                                            <input type="text" name="seeking[]" class="flex-1 shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="What are you seeking?">
+                                                                            <input type="number" name="seeking-points[]" class="ml-2 w-20 shadow-sm focus:ring-green-500 focus:border-green-500 block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="flex justify-end">
+                                                        <button type="button" onclick="toggleCreateTradeForm()" class="mr-3 inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                            Create Trade
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                         
                                         <div class="mt-4 overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
@@ -308,13 +416,14 @@
                                                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-6">User</th>
                                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Offering</th>
                                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Seeking</th>
+                                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">Category</th>
                                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">CKC Value</th>
                                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                                                             <span class="sr-only">Actions</span>
                                                         </th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-800">
+                                                <tbody id="trades-table-body" class="divide-y divide-gray-200 dark:divide-gray-600 bg-white dark:bg-gray-800">
                                                     <tr>
                                                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                                             <div class="flex items-center">
@@ -334,6 +443,9 @@
                                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                             <div class="text-gray-900 dark:text-white">Vegetable Seeds</div>
                                                             <div class="text-gray-500 dark:text-gray-400">Heirloom varieties preferred</div>
+                                                        </td>
+                                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                                            <div class="text-gray-900 dark:text-white">Organic Waste</div>
                                                         </td>
                                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
@@ -365,6 +477,9 @@
                                                             <div class="text-gray-500 dark:text-gray-400">Bookshelf or small furniture</div>
                                                         </td>
                                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                                            <div class="text-gray-900 dark:text-white">Solar Energy</div>
+                                                        </td>
+                                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                                                                 +100 CKC
                                                             </span>
@@ -392,6 +507,9 @@
                                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                             <div class="text-gray-900 dark:text-white">Gardening Help</div>
                                                             <div class="text-gray-500 dark:text-gray-400">Setting up raised beds</div>
+                                                        </td>
+                                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                                            <div class="text-gray-900 dark:text-white">Other</div>
                                                         </td>
                                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
                                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
@@ -571,6 +689,7 @@
             }
         });
     </script>
+    <script src="../js/greenswap.js"></script>
     <script src="../js/common.js"></script>
 </body>
 </html>

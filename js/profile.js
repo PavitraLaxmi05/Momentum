@@ -140,7 +140,19 @@ function initializeUI() {
  */
 function loadUserProfile() {
     const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
     
+    // Check if we're in development mode (using local server)
+    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (isDev && user) {
+        // In development mode, use the user data from localStorage
+        console.log('Development mode: Using mock profile data');
+        displayUserProfile(user);
+        return;
+    }
+    
+    // In production mode, use real API
     fetch('/api/auth/me', {
         method: 'GET',
         headers: {
@@ -159,6 +171,14 @@ function loadUserProfile() {
     })
     .catch(error => {
         console.error('Error fetching profile:', error);
+        
+        // If API call fails in development, try to use localStorage data as fallback
+        if (isDev && user) {
+            console.log('Falling back to localStorage user data');
+            displayUserProfile(user);
+            return;
+        }
+        
         showNotification('Failed to load profile data. Please try again later.', 'error');
     });
 }
@@ -323,10 +343,68 @@ function updateProfile() {
             formData.append('profilePicture', profilePictureInput.files[0]);
         }
         
+        // Check if we're in development mode (using local server)
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        if (isDev) {
+            // In development mode, update the user data directly in localStorage
+            console.log('Development mode: Updating profile locally');
+            
+            // Get form data values
+            const username = formData.get('username');
+            const email = formData.get('email');
+            const bio = formData.get('bio');
+            const interests = formData.get('interests');
+            
+            // Update local storage with new user data
+            const currentUser = JSON.parse(localStorage.getItem('user')) || {};
+            const updatedUser = { 
+                ...currentUser,
+                username: username || currentUser.username,
+                email: email || currentUser.email,
+                bio: bio || currentUser.bio,
+                interests: interests || currentUser.interests
+            };
+            
+            // If there's a profile image, create a mock URL
+            const profileImage = formData.get('profileImage');
+            if (profileImage && profileImage.name) {
+                // Create a mock avatar URL
+                updatedUser.avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(username || currentUser.username);
+            }
+            
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            
+            // Switch back to view mode and refresh display
+            const viewMode = document.getElementById('profile-view-mode');
+            const editMode = document.getElementById('profile-edit-mode');
+            
+            if (viewMode && editMode) {
+                viewMode.classList.remove('hidden');
+                editMode.classList.add('hidden');
+            }
+            
+            displayUserProfile(updatedUser);
+            
+            // Update user profile information across all pages
+            loadUserProfileHeader();
+            
+            showNotification('Profile updated successfully', 'success');
+            
+            // Restore button if it exists
+            if (saveButton) {
+                saveButton.disabled = false;
+                saveButton.innerHTML = 'Save';
+            }
+            
+            return;
+        }
+        
+        // In production mode, use real API
         fetch('/api/auth/updateprofile', {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
                 // Don't set Content-Type when using FormData, browser will set it with boundary
             },
             body: formData
@@ -457,6 +535,29 @@ function updatePassword() {
             };
         }
         
+        // Check if we're in development mode (using local server)
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        if (isDev) {
+            // In development mode, simulate password update
+            console.log('Development mode: Simulating password update');
+            
+            // Simulate successful password update
+            setTimeout(() => {
+                // Clear password fields
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-password').value = '';
+                
+                showNotification('Password updated successfully', 'success');
+                
+                // Restore button if it exists
+                if (updateButton) restoreButton();
+            }, 500);
+            
+            return;
+        }
+        
         fetch('/api/auth/updatepassword', {
             method: 'PUT',
             headers: {
@@ -552,6 +653,51 @@ function loadUserIdeas() {
             `;
         }
         
+        // Check if we're in development mode (using local server)
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        if (isDev) {
+            // In development mode, use mock ideas data
+            console.log('Development mode: Using mock ideas data');
+            
+            // Remove loading message
+            if (loadingElement) {
+                loadingElement.remove();
+            }
+            
+            // Create mock ideas data
+            const mockIdeas = [
+                {
+                    _id: 'idea1',
+                    title: 'Community Garden Initiative',
+                    description: 'A proposal to convert vacant lots into community gardens to grow organic produce.',
+                    category: 'Urban Agriculture',
+                    impact: 'High',
+                    status: 'Approved',
+                    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    user: {
+                        username: JSON.parse(localStorage.getItem('user'))?.username || 'user'
+                    }
+                },
+                {
+                    _id: 'idea2',
+                    title: 'Neighborhood Composting Program',
+                    description: 'Setting up community composting stations to reduce food waste going to landfills.',
+                    category: 'Waste Reduction',
+                    impact: 'Medium',
+                    status: 'Under Review',
+                    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                    user: {
+                        username: JSON.parse(localStorage.getItem('user'))?.username || 'user'
+                    }
+                }
+            ];
+            
+            displayUserIdeas(mockIdeas);
+            return;
+        }
+        
+        // In production mode, use real API
         fetch('/api/ideas', {
             method: 'GET',
             headers: {
@@ -817,6 +963,23 @@ function signOut() {
         
         // Clear any other sensitive data that might be stored
         sessionStorage.clear(); // Clear any session storage data
+        
+        // Check if we're in development mode (using local server)
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        if (isDev) {
+            // In development mode, skip server logout request
+            console.log('Development mode: Skipping server logout request');
+            
+            // Show a brief message before redirecting
+            showNotification('Successfully signed out', 'success');
+            
+            // Delay redirect slightly for better UX
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+            return;
+        }
         
         // Optional: Make a logout request to the server to invalidate the token
         // This is a good security practice if your backend supports it
