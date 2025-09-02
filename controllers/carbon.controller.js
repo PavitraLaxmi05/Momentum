@@ -1,6 +1,8 @@
+//carbon.controller.js
 const { CarbonEntry, CarbonFootprint } = require('../models/carbon.model');
 const { ErrorResponse } = require('../middleware/error.middleware');
 const axios = require('axios');
+const { calculateCarbonFootprint } = require('./carbon.calculator.controller');
 
 /**
  * Get user's carbon footprint
@@ -323,4 +325,14 @@ exports.setMonthlyGoal = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+module.exports = {
+  getCarbonFootprint: exports.getCarbonFootprint,
+  addCarbonEntry: exports.addCarbonEntry,
+  deleteCarbonEntry: exports.deleteCarbonEntry,
+  getCarbonTips: exports.getCarbonTips,
+  getEnergyData: exports.getEnergyData,
+  setMonthlyGoal: exports.setMonthlyGoal,
+  calculateCarbonFootprint
 };
