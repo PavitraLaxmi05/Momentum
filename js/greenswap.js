@@ -1,92 +1,27 @@
 /**
- * GreenSwap Network JavaScript
- * Handles trade creation, points calculation, and profile updates
+ * GreenSwap Network JavaScript (Corrected Version)
+ * Handles trade creation, points calculation, leaderboard, and badges
  */
 
-// Constants for category points
-const CATEGORY_POINTS = {
-    'Vegetables': 10,
-    'Fruits': 10,
-    'Organic Waste': 12,
-    'Solar Energy': 15,
-    'Homemade Products': 20,
-    'Other': 5
-};
-
-// Badge thresholds
-const BADGE_THRESHOLDS = {
-    'Vegetables': 200,
-    'Fruits': 200,
-    'Organic Waste': 200,
-    'Solar Energy': 200,
-    'Homemade Products': 200,
-    'Other': 200
-};
-
-// Badge names
-const BADGE_NAMES = {
-    'Vegetables': 'Veggie Master',
-    'Fruits': 'Fruit Champion',
-    'Organic Waste': 'Compost King',
-    'Solar Energy': 'Energy Innovator',
-    'Homemade Products': 'Craft Artisan',
-    'Other': 'Eco Explorer'
-};
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Load user profile data
-    loadUserProfile();
+    loadUserProfileAndBadges();
     
-    // Initialize the create trade form
-    initCreateTradeForm();
-    
-    // Load existing trades from local storage
-    loadTrades();
-    
-    // Add event listeners
-    document.getElementById('create-trade-button').addEventListener('click', toggleCreateTradeForm);
-    
-    const tradeForm = document.getElementById('trade-form');
-    if (tradeForm) {
-        tradeForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitTradeForm();
-        });
-    }
-    
-    // Add event listeners for adding multiple offerings/seeking items
-    const addOfferingBtn = document.getElementById('add-offering');
-    if (addOfferingBtn) {
-        addOfferingBtn.addEventListener('click', addOfferingField);
-    }
-    
-    const addSeekingBtn = document.getElementById('add-seeking');
-    if (addSeekingBtn) {
-        addSeekingBtn.addEventListener('click', addSeekingField);
-    }
-    
-    // Add event listener for category selection to update points
-    const categorySelect = document.getElementById('trade-category');
-    if (categorySelect) {
-        categorySelect.addEventListener('change', updateCategoryPoints);
-    }
-    
-    // Add event listener for trade form submission
-    const tradeFormSubmit = document.getElementById('trade-form-submit');
-    if (tradeFormSubmit) {
-        tradeFormSubmit.addEventListener('click', handleTradeFormSubmit);
-    }
-    
-    // Initialize leaderboard
+    // Clear static HTML content and load dynamic data
+    loadTradesFromLocalStorage();
     updateLeaderboard();
+
+    // Attach event listeners
+    document.getElementById('create-trade-button')?.addEventListener('click', toggleCreateTradeForm);
+    document.getElementById('trade-category')?.addEventListener('change', updateCategoryPoints);
+    document.getElementById('add-offering-btn')?.addEventListener('click', addOfferingField);
+    document.getElementById('add-seeking-btn')?.addEventListener('click', addSeekingField);
     
-    // Check for badge awards on load
-    checkForBadgeAwards();
-    
-    // Add event listener for cancel button
-    const cancelBtn = document.getElementById('cancel-trade-btn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function(e) {
+    const tradeForm = document.getElementById('create-trade-form');
+    if (tradeForm) {
+        tradeForm.addEventListener('submit', handleTradeFormSubmit);
+        const cancelBtn = tradeForm.querySelector('button[type="button"]');
+        cancelBtn.addEventListener('click', (e) => {
             e.preventDefault();
             toggleCreateTradeForm();
         });
@@ -94,484 +29,78 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Load user profile data for the trade form
+ * Loads the user profile, updates the card, and displays badges.
  */
-function loadUserProfile() {
+function loadUserProfileAndBadges() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) return;
-    
-    // Update profile card with user data
+
     updateProfileCard(user);
-    
-    // Auto-populate trade form with user profile details
-    const tradeUsername = document.getElementById('trade-username');
-    const tradeFullname = document.getElementById('trade-fullname');
-    const tradeLocation = document.getElementById('trade-location');
-    const tradePoints = document.getElementById('trade-points');
-    const tradeContact = document.getElementById('trade-contact');
-    
-    if (tradeUsername) tradeUsername.value = user.username || '';
-    if (tradeFullname) tradeFullname.value = `${user.firstName || ''} ${user.lastName || ''}`.trim();
-    if (tradeLocation) tradeLocation.value = user.location || '';
-    if (tradePoints) tradePoints.value = user.sustainabilityScore || 0;
-    if (tradeContact) tradeContact.value = user.email || '';
+    updateBadgesDisplay(user.badges || []);
 }
 
 /**
- * Update the profile card with user data
+ * Updates the user profile card with the latest data.
  */
 function updateProfileCard(user) {
-    // Update profile picture
-    const profilePic = document.querySelector('.user-profile-card .h-20.w-20 img');
-    if (profilePic) {
-        profilePic.src = user.profilePicture || '../public/images/default-avatar.png';
-    }
-    
-    // Update username
-    const username = document.querySelector('.user-profile-card h2');
-    if (username) {
-        username.textContent = `${user.firstName || ''} ${user.lastName || ''}`;
-        if (!user.firstName && !user.lastName) {
-            username.textContent = user.username || 'User';
-        }
-    }
-    
-    // Update CKC score
-    const ckcScore = document.querySelector('.user-profile-card .text-3xl.font-bold');
-    if (ckcScore) {
-        ckcScore.textContent = user.sustainabilityScore || '0';
-    }
-    
-    // Update progress bar
-    const progressBar = document.querySelector('.user-profile-card .bg-green-500');
-    if (progressBar) {
-        const score = user.sustainabilityScore || 0;
-        const percentage = Math.min(score / 2000 * 100, 100);
-        progressBar.style.width = `${percentage}%`;
-    }
-    
-    // Update member since date
-    const memberSince = document.querySelector('.user-profile-card p.text-sm.text-gray-500');
-    if (memberSince && user.createdAt) {
-        const date = new Date(user.createdAt);
-        const month = date.toLocaleString('default', { month: 'long' });
-        const year = date.getFullYear();
-        memberSince.textContent = `Member since ${month} ${year}`;
+    const card = document.querySelector('.lg\\:col-span-1');
+    if (!card) return;
+
+    card.querySelector('img').src = user.profilePicture || '../public/images/default-avatar.png';
+    card.querySelector('h2').textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username;
+    card.querySelector('.text-3xl').textContent = user.sustainabilityScore || '0';
+
+    const progressBar = card.querySelector('.bg-green-500');
+    const percentage = Math.min((user.sustainabilityScore || 0) / 2000 * 100, 100);
+    progressBar.style.width = `${percentage}%`;
+
+    if (user.createdAt) {
+        const joinDate = new Date(user.createdAt);
+        card.querySelector('p.text-sm').textContent = `Member since ${joinDate.toLocaleString('default', { month: 'long' })} ${joinDate.getFullYear()}`;
     }
 }
 
 /**
- * Toggle the create trade form visibility
+ * Toggles the visibility of the create trade form.
  */
 function toggleCreateTradeForm() {
-    const formContainer = document.getElementById('create-trade-form-container');
-    if (!formContainer) return;
-    
-    const isHidden = formContainer.style.display === 'none' || !formContainer.style.display;
-    
+    const form = document.getElementById('create-trade-form');
+    const isHidden = form.classList.contains('hidden');
+
     if (isHidden) {
-        // Show form
-        formContainer.style.display = 'block';
-        // Reset form and load user profile data
-        const tradeForm = document.getElementById('trade-form');
-        if (tradeForm) {
-            tradeForm.reset();
-            loadUserProfile();
-        }
-    } else {
-        // Hide form
-        formContainer.style.display = 'none';
-    }
-}
-
-/**
- * Initialize the create trade form
- */
-function initCreateTradeForm() {
-    const tradeForm = document.getElementById('trade-form');
-    if (!tradeForm) return;
-    
-    // Add initial offering and seeking fields
-    addOfferingField();
-    addSeekingField();
-    
-    // Update category points
-    updateCategoryPoints();
-}
-
-/**
- * Update category points when category is selected
- */
-function updateCategoryPoints() {
-    const category = document.getElementById('trade-category').value;
-    const pointsElement = document.getElementById('category-points');
-    
-    if (category && CATEGORY_POINTS[category]) {
-        pointsElement.textContent = `+${CATEGORY_POINTS[category]} points`;
-    } else {
-        pointsElement.textContent = '+0 points';
-    }
-}
-
-/**
- * Add a new offering field
- */
-function addOfferingField() {
-    const offeringContainer = document.getElementById('offering-container');
-    if (!offeringContainer) return;
-    
-    const offeringCount = offeringContainer.querySelectorAll('.offering-item').length;
-    
-    if (offeringCount < 5) { // Limit to 5 offerings
-        const newOffering = document.createElement('div');
-        newOffering.className = 'offering-item mt-3';
-        newOffering.innerHTML = `
-            <div class="flex space-x-3">
-                <div class="flex-1">
-                    <input type="text" name="offering-item[]" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-700 dark:text-white" placeholder="Item description">
-                </div>
-                <div class="w-24">
-                    <input type="number" name="offering-points[]" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-700 dark:text-white" placeholder="Points" min="0">
-                </div>
-            </div>
-        `;
-        offeringContainer.appendChild(newOffering);
-    }
-}
-
-/**
- * Add a new seeking field
- */
-function addSeekingField() {
-    const seekingContainer = document.getElementById('seeking-container');
-    if (!seekingContainer) return;
-    
-    const seekingCount = seekingContainer.querySelectorAll('.seeking-item').length;
-    
-    if (seekingCount < 5) { // Limit to 5 seeking items
-        const newSeeking = document.createElement('div');
-        newSeeking.className = 'seeking-item mt-3';
-        newSeeking.innerHTML = `
-            <div class="flex space-x-3">
-                <div class="flex-1">
-                    <input type="text" name="seeking-item[]" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-700 dark:text-white" placeholder="Item description">
-                </div>
-                <div class="w-24">
-                    <input type="number" name="seeking-points[]" class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-700 dark:text-white" placeholder="Points" min="0">
-                </div>
-            </div>
-        `;
-        seekingContainer.appendChild(newSeeking);
-    }
-}
-
-/**
- * Submit the trade form
- */
-function submitTradeForm() {
-    const tradeData = {
-        username: document.getElementById('trade-username').value,
-        fullName: document.getElementById('trade-fullname').value,
-        category: document.getElementById('trade-category').value,
-        offerings: Array.from(document.querySelectorAll('input[name="offering-item[]"]')).map(input => input.value),
-        seeking: Array.from(document.querySelectorAll('input[name="seeking-item[]"]')).map(input => input.value),
-        totalPoints: calculateTotalPoints()
-    };
-
-    fetch('/api/trades', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(tradeData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to create trade');
-        }
-        return response.json();
-    })
-    .then(trade => {
-        addTradeToTable(trade);
-        showNotification('Trade created successfully!', 'success');
-    })
-    .catch(error => {
-        console.error('Error creating trade:', error);
-        showNotification('Failed to create trade. Please try again later.', 'error');
-    });
-}
-
-/**
- * Save trade to local storage
- */
-function saveTrade(trade) {
-    const trades = JSON.parse(localStorage.getItem('trades')) || [];
-    trades.push(trade);
-    localStorage.setItem('trades', JSON.stringify(trades));
-}
-
-/**
- * Load trades from local storage
- */
-function loadTrades() {
-    fetch('/api/trades', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch trades');
-        }
-        return response.json();
-    })
-    .then(trades => {
-        trades.forEach(trade => addTradeToTable(trade));
-    })
-    .catch(error => {
-        console.error('Error fetching trades:', error);
-        showNotification('Failed to load trades. Please try again later.', 'error');
-    });
-}
-
-/**
- * Add trade to table
- */
-function addTradeToTable(trade) {
-    const tableBody = document.getElementById('trades-table-body');
-    if (!tableBody) return;
-    
-    const row = document.createElement('tr');
-    row.className = 'bg-white dark:bg-gray-800';
-    row.dataset.tradeId = trade.id;
-    
-    // Format offerings and seeking items
-    const offeringText = trade.offerings.map(item => item.description).join(', ');
-    const seekingText = trade.seeking.map(item => item.description).join(', ');
-    
-    row.innerHTML = `
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-            ${trade.username}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-            ${offeringText}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-            ${seekingText}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-            ${trade.category}
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100">
-                +${trade.totalPoints}
-            </span>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <a href="#" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 contact-btn" data-username="${trade.username}">Contact</a>
-        </td>
-    `;
-    
-    // Add contact button event listener
-    const contactBtn = row.querySelector('.contact-btn');
-    if (contactBtn) {
-        contactBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const username = this.dataset.username;
-            showConfirmation(`Contact request sent to ${username}!`);
-        });
+        form.reset();
+        populateUserProfileData();
+        updateCategoryPoints();
+        // Clear dynamic fields and add one of each
+        document.getElementById('offerings-container').innerHTML = '';
+        document.getElementById('seeking-container').innerHTML = '';
+        addOfferingField();
+        addSeekingField();
     }
     
-    // Add to table
-    tableBody.prepend(row); // Add newest trades at the top
+    form.classList.toggle('hidden');
 }
 
 /**
- * Update user points
- */
-function updateUserPoints(points) {
-    // Get current user
-    const user = JSON.parse(localStorage.getItem('user')) || {};
-    
-    // Update points
-    user.ckc_points = (user.ckc_points || 0) + points;
-    
-    // Save updated user
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    // Update profile card
-    updateProfileCard(user);
-}
-
-/**
- * Update leaderboard
- */
-function updateLeaderboard() {
-    // In a real application, this would fetch data from the server
-    // For now, we'll just update the current user's position
-    const user = JSON.parse(localStorage.getItem('user')) || {};
-    
-    // Find the user's row in the leaderboard
-    const leaderboardRows = document.querySelectorAll('#leaderboard-table tbody tr');
-    leaderboardRows.forEach(row => {
-        const usernameCell = row.querySelector('td:nth-child(2)');
-        if (usernameCell && usernameCell.textContent.trim() === user.username) {
-            // Update points
-            const pointsCell = row.querySelector('td:nth-child(3)');
-            if (pointsCell) {
-                pointsCell.textContent = user.ckc_points || 0;
-            }
-        }
-    });
-}
-
-/**
- * Check for badge awards
- */
-function checkForBadges(category, points) {
-    // Get current user
-    const user = JSON.parse(localStorage.getItem('user')) || {};
-    
-    // Initialize badges if not exists
-    user.badges = user.badges || [];
-    
-    // Check for category-specific badges
-    if (category === 'Organic Waste' && !user.badges.includes('Composter')) {
-        user.badges.push('Composter');
-        showConfirmation('New Badge Earned: Composter! 🌱');
-    } else if (category === 'Solar Energy' && !user.badges.includes('Solar Pioneer')) {
-        user.badges.push('Solar Pioneer');
-        showConfirmation('New Badge Earned: Solar Pioneer! ☀️');
-    } else if (category === 'Homemade Products' && !user.badges.includes('Artisan')) {
-        user.badges.push('Artisan');
-        showConfirmation('New Badge Earned: Artisan! 🧵');
-    }
-    
-    // Check for points-based badges
-    const totalPoints = user.ckc_points || 0;
-    
-    if (totalPoints >= BADGE_THRESHOLDS.SUSTAINABILITY_MASTER && !user.badges.includes(BADGE_NAMES.SUSTAINABILITY_MASTER)) {
-        user.badges.push(BADGE_NAMES.SUSTAINABILITY_MASTER);
-        showConfirmation(`New Badge Earned: ${BADGE_NAMES.SUSTAINABILITY_MASTER}! 🏆`);
-    } else if (totalPoints >= BADGE_THRESHOLDS.SUSTAINABILITY_PRO && !user.badges.includes(BADGE_NAMES.SUSTAINABILITY_PRO)) {
-        user.badges.push(BADGE_NAMES.SUSTAINABILITY_PRO);
-        showConfirmation(`New Badge Earned: ${BADGE_NAMES.SUSTAINABILITY_PRO}! 🥈`);
-    } else if (totalPoints >= BADGE_THRESHOLDS.SUSTAINABILITY_ENTHUSIAST && !user.badges.includes(BADGE_NAMES.SUSTAINABILITY_ENTHUSIAST)) {
-        user.badges.push(BADGE_NAMES.SUSTAINABILITY_ENTHUSIAST);
-        showConfirmation(`New Badge Earned: ${BADGE_NAMES.SUSTAINABILITY_ENTHUSIAST}! 🥉`);
-    }
-    
-    // Save updated user
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    // Update badges display
-    updateBadgesDisplay(user.badges);
-}
-
-/**
- * Update badges display
- */
-function updateBadgesDisplay(badges) {
-    const badgesContainer = document.getElementById('user-badges');
-    if (!badgesContainer || !badges || !badges.length) return;
-    
-    // Clear existing badges
-    badgesContainer.innerHTML = '';
-    
-    // Add badges
-    badges.forEach(badge => {
-        const badgeElement = document.createElement('span');
-        badgeElement.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100 mr-2 mb-2';
-        
-        // Add emoji based on badge name
-        let emoji = '🌟';
-        if (badge === 'Composter') emoji = '🌱';
-        if (badge === 'Solar Pioneer') emoji = '☀️';
-        if (badge === 'Artisan') emoji = '🧵';
-        if (badge === BADGE_NAMES.SUSTAINABILITY_ENTHUSIAST) emoji = '🥉';
-        if (badge === BADGE_NAMES.SUSTAINABILITY_PRO) emoji = '🥈';
-        if (badge === BADGE_NAMES.SUSTAINABILITY_MASTER) emoji = '🏆';
-        
-        badgeElement.textContent = `${emoji} ${badge}`;
-        badgesContainer.appendChild(badgeElement);
-    });
-}
-
-/**
- * Show confirmation message
- */
-function showConfirmation(message) {
-    const confirmationElement = document.createElement('div');
-    confirmationElement.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg z-50 animate-fade-in-up';
-    confirmationElement.textContent = message;
-    
-    document.body.appendChild(confirmationElement);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-        confirmationElement.classList.add('animate-fade-out');
-        setTimeout(() => {
-            document.body.removeChild(confirmationElement);
-        }, 500);
-    }, 3000);
-}
-
-/**
- * Check for badge awards on load
- */
-function checkForBadgeAwards() {
-    const user = JSON.parse(localStorage.getItem('user')) || {};
-    if (user.badges && user.badges.length > 0) {
-        updateBadgesDisplay(user.badges);
-    }
-}
-    const addOfferingBtn = document.getElementById('add-offering-btn');
-    if (addOfferingBtn) {
-        addOfferingBtn.addEventListener('click', addOfferingField);
-    }
-    
-    // Add event listener for adding multiple seeking items
-    const addSeekingBtn = document.getElementById('add-seeking-btn');
-    if (addSeekingBtn) {
-        addSeekingBtn.addEventListener('click', addSeekingField);
-    }
-    
-    // Populate user profile data in the form
-    populateUserProfileData();
-
-
-/**
- * Populate user profile data in the trade form
+ * Populates the read-only user fields in the trade form.
  */
 function populateUserProfileData() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) return;
-    
-    // Set user profile fields
+
     document.getElementById('trade-username').value = user.username || '';
     document.getElementById('trade-fullname').value = `${user.firstName || ''} ${user.lastName || ''}`.trim();
     document.getElementById('trade-points').value = user.sustainabilityScore || '0';
-    
-    // If user has location data
-    if (user.location) {
-        document.getElementById('trade-location').value = user.location;
-    }
-    
-    // If user has contact info
-    if (user.email) {
-        document.getElementById('trade-contact').value = user.email;
-    }
+    document.getElementById('trade-location').value = user.location || 'Not set';
+    document.getElementById('trade-contact').value = user.email || 'Not set';
 }
 
 /**
- * Update category points based on selection
+ * Updates the category points display when the user selects a category.
  */
 function updateCategoryPoints() {
     const categorySelect = document.getElementById('trade-category');
     const categoryPointsDisplay = document.getElementById('category-points');
-    
-    if (!categorySelect || !categoryPointsDisplay) return;
     
     const categoryPoints = {
         'vegetables': 10,
@@ -584,211 +113,121 @@ function updateCategoryPoints() {
         'other': 5
     };
     
-    const selectedCategory = categorySelect.value;
-    const points = categoryPoints[selectedCategory] || 0;
-    
+    const points = categoryPoints[categorySelect.value] || 0;
     categoryPointsDisplay.textContent = `+${points} points`;
     document.getElementById('category-points-value').value = points;
 }
 
 /**
- * Add a new offering field
+ * Adds a new field for offering an item.
  */
 function addOfferingField() {
-    const offeringContainer = document.getElementById('offerings-container');
-    const offeringCount = offeringContainer.querySelectorAll('.offering-item').length;
-    
-    if (offeringCount >= 5) {
-        alert('Maximum 5 offerings allowed');
-        return;
-    }
-    
-    const newOffering = document.createElement('div');
-    newOffering.className = 'offering-item mt-3';
-    newOffering.innerHTML = `
-        <div class="flex items-center">
-            <input type="text" name="offering[]" class="flex-1 shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="What are you offering?">
-            <input type="number" name="offering-points[]" class="ml-2 w-20 shadow-sm focus:ring-green-500 focus:border-green-500 block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0">
-            <button type="button" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 remove-offering-btn">
-                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
+    const container = document.getElementById('offerings-container');
+    if (container.children.length >= 5) return;
+
+    const newItem = document.createElement('div');
+    newItem.className = 'offering-item mt-3 flex items-center';
+    newItem.innerHTML = `
+        <input type="text" name="offering[]" class="flex-1 shadow-sm block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="Item description" required>
+        <input type="number" name="offering-points[]" class="ml-2 w-20 shadow-sm block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0" value="0">
+        <button type="button" class="remove-btn ml-2 p-1 text-white bg-red-600 hover:bg-red-700 rounded-full">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" /></svg>
+        </button>
     `;
-    
-    offeringContainer.appendChild(newOffering);
-    
-    // Add event listener to remove button
-    const removeBtn = newOffering.querySelector('.remove-offering-btn');
-    removeBtn.addEventListener('click', function() {
-        offeringContainer.removeChild(newOffering);
-    });
+    container.appendChild(newItem);
+    newItem.querySelector('.remove-btn').addEventListener('click', () => newItem.remove());
 }
 
 /**
- * Add a new seeking field
+ * Adds a new field for seeking an item.
  */
 function addSeekingField() {
-    const seekingContainer = document.getElementById('seeking-container');
-    const seekingCount = seekingContainer.querySelectorAll('.seeking-item').length;
-    
-    if (seekingCount >= 5) {
-        alert('Maximum 5 seeking items allowed');
-        return;
-    }
-    
-    const newSeeking = document.createElement('div');
-    newSeeking.className = 'seeking-item mt-3';
-    newSeeking.innerHTML = `
-        <div class="flex items-center">
-            <input type="text" name="seeking[]" class="flex-1 shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="What are you seeking?">
-            <input type="number" name="seeking-points[]" class="ml-2 w-20 shadow-sm focus:ring-green-500 focus:border-green-500 block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0">
-            <button type="button" class="ml-2 inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 remove-seeking-btn">
-                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
+    const container = document.getElementById('seeking-container');
+    if (container.children.length >= 5) return;
+
+    const newItem = document.createElement('div');
+    newItem.className = 'seeking-item mt-3 flex items-center';
+    newItem.innerHTML = `
+        <input type="text" name="seeking[]" class="flex-1 shadow-sm block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="Item description" required>
+        <input type="number" name="seeking-points[]" class="ml-2 w-20 shadow-sm block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0" value="0">
+        <button type="button" class="remove-btn ml-2 p-1 text-white bg-red-600 hover:bg-red-700 rounded-full">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" /></svg>
+        </button>
     `;
-    
-    seekingContainer.appendChild(newSeeking);
-    
-    // Add event listener to remove button
-    const removeBtn = newSeeking.querySelector('.remove-seeking-btn');
-    removeBtn.addEventListener('click', function() {
-        seekingContainer.removeChild(newSeeking);
-    });
+    container.appendChild(newItem);
+    newItem.querySelector('.remove-btn').addEventListener('click', () => newItem.remove());
 }
 
 /**
- * Handle trade form submission
+ * Handles the submission of the trade form.
  */
 function handleTradeFormSubmit(event) {
     event.preventDefault();
-    
-    // Get form data
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        alert("You must be logged in to create a trade.");
+        return;
+    }
+
+    // Collect data from form
     const category = document.getElementById('trade-category').value;
     const offerings = Array.from(document.querySelectorAll('input[name="offering[]"]')).map(input => input.value);
     const offeringPoints = Array.from(document.querySelectorAll('input[name="offering-points[]"]')).map(input => parseInt(input.value) || 0);
     const seeking = Array.from(document.querySelectorAll('input[name="seeking[]"]')).map(input => input.value);
-    const seekingPoints = Array.from(document.querySelectorAll('input[name="seeking-points[]"]')).map(input => parseInt(input.value) || 0);
     const categoryPointsValue = parseInt(document.getElementById('category-points-value').value) || 0;
-    
-    // Calculate total points
     const totalPoints = categoryPointsValue + offeringPoints.reduce((sum, points) => sum + points, 0);
-    
-    // Create trade object
+
     const trade = {
+        id: `trade_${Date.now()}`,
+        username: user.username,
+        profilePicture: user.profilePicture,
         category,
-        offerings: offerings.map((item, index) => ({ item, points: offeringPoints[index] })),
-        seeking: seeking.map((item, index) => ({ item, points: seekingPoints[index] })),
-        categoryPoints: categoryPointsValue,
+        offerings: offerings.map((item, i) => ({ item, points: offeringPoints[i] })),
+        seeking: seeking.map((item, i) => ({ item, points: 0 })), // Assuming seeking points are just for show
         totalPoints,
         timestamp: new Date().toISOString()
     };
-    
-    // Add trade to local storage
+
+    // Save and update UI
     addTradeToLocalStorage(trade);
-    
-    // Update user points
-    updateUserPoints(totalPoints);
-    
-    // Add trade to the table
     addTradeToTable(trade);
-    
-    // Show confirmation message
-    showTradeConfirmation(totalPoints);
-    
-    // Reset form and hide it
-    document.getElementById('create-trade-form').reset();
+    updateUserPoints(totalPoints, category);
     toggleCreateTradeForm();
-    
-    // Check for badge awards
-    checkForBadgeAwards();
+    showTradeConfirmation(totalPoints);
 }
 
 /**
- * Add trade to local storage
+ * Adds a new trade to local storage.
  */
 function addTradeToLocalStorage(trade) {
-    // Get existing trades or initialize empty array
     const trades = JSON.parse(localStorage.getItem('trades')) || [];
-    
-    // Add user info to the trade
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-        trade.userId = user.id;
-        trade.username = user.username;
-        trade.profilePicture = user.profilePicture;
-    }
-    
-    // Add the new trade
     trades.push(trade);
-    
-    // Save back to local storage
     localStorage.setItem('trades', JSON.stringify(trades));
 }
 
 /**
- * Update user points in local storage
- */
-function updateUserPoints(points) {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) return;
-    
-    // Update sustainability score
-    user.sustainabilityScore = (parseInt(user.sustainabilityScore) || 0) + points;
-    
-    // Update category-specific points
-    const category = document.getElementById('trade-category').value;
-    if (!user.categoryPoints) user.categoryPoints = {};
-    user.categoryPoints[category] = (user.categoryPoints[category] || 0) + points;
-    
-    // Save updated user data
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    // Update UI
-    updateProfileCard(user);
-    updateLeaderboard(user);
-}
-
-/**
- * Add trade to the trades table
+ * Adds a trade to the visible table.
  */
 function addTradeToTable(trade) {
-    const tableBody = document.querySelector('.trading-platform table tbody');
+    const tableBody = document.getElementById('trades-table-body');
     if (!tableBody) return;
-    
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) return;
-    
+
     const row = document.createElement('tr');
-    
-    // Format offerings and seeking items
-    const offeringText = trade.offerings.map(o => o.item).join(', ');
-    const seekingText = trade.seeking.map(s => s.item).join(', ');
-    
     row.innerHTML = `
         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
             <div class="flex items-center">
                 <div class="h-10 w-10 flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" src="${user.profilePicture || '../public/images/default-avatar.png'}" alt="">
+                    <img class="h-10 w-10 rounded-full" src="${trade.profilePicture || '../public/images/default-avatar.png'}" alt="User Avatar">
                 </div>
                 <div class="ml-4">
-                    <div class="font-medium text-gray-900 dark:text-white">${user.username || 'User'}</div>
-                    <div class="text-gray-500 dark:text-gray-400">${user.sustainabilityScore || '0'} CKC</div>
+                    <div class="font-medium text-gray-900 dark:text-white">${trade.username}</div>
                 </div>
             </div>
         </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-            <div class="text-gray-900 dark:text-white">${offeringText}</div>
-            <div class="text-gray-500 dark:text-gray-400">${getCategoryLabel(trade.category)}</div>
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-            <div class="text-gray-900 dark:text-white">${seekingText}</div>
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${trade.offerings.map(o => o.item).join(', ')}</td>
+        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${trade.seeking.map(s => s.item).join(', ')}</td>
+        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${getCategoryLabel(trade.category)}</td>
+        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
                 +${trade.totalPoints} CKC
             </span>
@@ -797,193 +236,187 @@ function addTradeToTable(trade) {
             <a href="#" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">Contact</a>
         </td>
     `;
-    
-    // Add to the beginning of the table
-    if (tableBody.firstChild) {
-        tableBody.insertBefore(row, tableBody.firstChild);
-    } else {
-        tableBody.appendChild(row);
-    }
+    tableBody.prepend(row);
 }
 
 /**
- * Get category label from value
+ * Loads all trades from local storage and displays them.
  */
-function getCategoryLabel(category) {
-    const categories = {
-        'vegetables': 'Vegetables',
-        'fruits': 'Fruits',
-        'organic-waste': 'Organic Waste',
-        'solar-energy': 'Solar Energy',
-        'homemade-products': 'Homemade Products',
-        'reusing-materials': 'Reusing Materials',
-        'saving-water': 'Saving Water',
-        'other': 'Other'
-    };
-    
-    return categories[category] || 'Other';
+function loadTradesFromLocalStorage() {
+    const trades = JSON.parse(localStorage.getItem('trades')) || [];
+    const tableBody = document.getElementById('trades-table-body');
+    if (!tableBody) return;
+    tableBody.innerHTML = ''; // Clear existing static rows
+    trades.reverse().forEach(trade => addTradeToTable(trade)); // Show newest first
 }
 
 /**
- * Update the leaderboard with user data
+ * Updates the user's points and checks for new badges.
  */
-function updateLeaderboard(currentUser) {
+function updateUserPoints(points, category) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+
+    user.sustainabilityScore = (user.sustainabilityScore || 0) + points;
+    
+    if (!user.categoryPoints) user.categoryPoints = {};
+    user.categoryPoints[category] = (user.categoryPoints[category] || 0) + points;
+    
+    localStorage.setItem('user', JSON.stringify(user));
+
+    updateProfileCard(user);
+    updateLeaderboard();
+    checkForBadgeAwards(); // Check for badges after points update
+}
+
+/**
+ * Updates the leaderboard with the current user's score and resorts it.
+ */
+function updateLeaderboard() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+    
     const leaderboardBody = document.querySelector('.leaderboard table tbody');
     if (!leaderboardBody) return;
-    
-    // Find the current user's row
-    const userRow = Array.from(leaderboardBody.querySelectorAll('tr')).find(row => {
-        const username = row.querySelector('.font-medium')?.textContent;
-        return username === currentUser.username;
-    });
-    
+
+    let userRow = Array.from(leaderboardBody.querySelectorAll('tr')).find(row => 
+        row.querySelector('.font-medium')?.textContent.trim() === user.username
+    );
+
     if (userRow) {
-        // Update existing row
-        const pointsCell = userRow.querySelector('td:nth-child(3)');
-        if (pointsCell) {
-            pointsCell.textContent = currentUser.sustainabilityScore || '0';
-        }
-        
-        // Resort the leaderboard
-        sortLeaderboard();
+        userRow.querySelector('td:nth-child(3)').textContent = user.sustainabilityScore;
     }
+
+    sortLeaderboard();
 }
 
 /**
- * Sort the leaderboard by points
+ * Sorts the leaderboard table by points in descending order.
  */
 function sortLeaderboard() {
     const leaderboardBody = document.querySelector('.leaderboard table tbody');
     if (!leaderboardBody) return;
-    
+
     const rows = Array.from(leaderboardBody.querySelectorAll('tr'));
-    
-    // Sort rows by points (descending)
     rows.sort((a, b) => {
-        const pointsA = parseInt(a.querySelector('td:nth-child(3)').textContent) || 0;
-        const pointsB = parseInt(b.querySelector('td:nth-child(3)').textContent) || 0;
+        const pointsA = parseInt(a.cells[2].textContent) || 0;
+        const pointsB = parseInt(b.cells[2].textContent) || 0;
         return pointsB - pointsA;
     });
-    
-    // Update rank numbers
-    rows.forEach((row, index) => {
-        const rankCell = row.querySelector('td:first-child');
-        if (rankCell) {
-            rankCell.textContent = index + 1;
-        }
-    });
-    
-    // Clear and re-append rows in new order
+
+    // Re-append sorted rows and update ranks
     leaderboardBody.innerHTML = '';
-    rows.forEach(row => leaderboardBody.appendChild(row));
+    rows.forEach((row, index) => {
+        row.cells[0].textContent = index + 1;
+        leaderboardBody.appendChild(row);
+    });
 }
 
 /**
- * Show trade confirmation message
- */
-function showTradeConfirmation(points) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = 'fixed bottom-4 right-4 bg-green-100 dark:bg-green-900 border-l-4 border-green-500 text-green-700 dark:text-green-200 p-4 rounded shadow-md transition-opacity duration-500';
-    notification.style.zIndex = '50';
-    notification.innerHTML = `
-        <div class="flex items-center">
-            <div class="py-1">
-                <svg class="h-6 w-6 text-green-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <div>
-                <p class="font-bold">Trade Created Successfully!</p>
-                <p class="text-sm">You earned +${points} CKC points.</p>
-            </div>
-        </div>
-    `;
-    
-    // Add to document
-    document.body.appendChild(notification);
-    
-    // Remove after 5 seconds
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 500);
-    }, 5000);
-}
-
-/**
- * Check for badge awards based on points thresholds
+ * Checks if the user has earned any new badges.
  */
 function checkForBadgeAwards() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !user.categoryPoints) return;
-    
+
     const badgeThresholds = {
         'saving-water': { points: 200, badge: 'Save Water Badge' },
-        'reusing-materials': { points: 200, badge: 'Reuse Champion Badge' },
-        'solar-energy': { points: 200, badge: 'Solar Adopter Badge' },
-        'organic-waste': { points: 200, badge: 'Composting Master Badge' }
+        'reusing-materials': { points: 200, badge: 'Reuse Champion' },
+        'solar-energy': { points: 200, badge: 'Solar Adopter' },
+        'organic-waste': { points: 200, badge: 'Composting Master' },
+        'homemade-products': { points: 200, badge: 'Craft Artisan' },
+        'vegetables': { points: 200, badge: 'Veggie Master' },
+        'fruits': { points: 200, badge: 'Fruit Champion' }
     };
-    
-    // Check each category for badge eligibility
-    for (const [category, threshold] of Object.entries(badgeThresholds)) {
-        const categoryPoints = user.categoryPoints[category] || 0;
-        
-        if (categoryPoints >= threshold.points) {
-            // Check if badge already awarded
-            if (!user.badges) user.badges = [];
-            
-            const badgeExists = user.badges.some(badge => badge.name === threshold.badge);
-            
-            if (!badgeExists) {
-                // Award new badge
-                user.badges.push({
-                    name: threshold.badge,
-                    category: category,
-                    awardedAt: new Date().toISOString()
-                });
-                
-                // Save updated user data
-                localStorage.setItem('user', JSON.stringify(user));
-                
-                // Show badge notification
-                showBadgeNotification(threshold.badge);
-            }
+
+    let newBadgeAwarded = false;
+    if (!user.badges) user.badges = [];
+
+    for (const [category, data] of Object.entries(badgeThresholds)) {
+        const hasBadge = user.badges.includes(data.badge);
+        if (!hasBadge && (user.categoryPoints[category] || 0) >= data.points) {
+            user.badges.push(data.badge);
+            showBadgeNotification(data.badge);
+            newBadgeAwarded = true;
         }
+    }
+
+    if (newBadgeAwarded) {
+        localStorage.setItem('user', JSON.stringify(user));
+        updateBadgesDisplay(user.badges);
     }
 }
 
 /**
- * Show badge award notification
+ * Updates the badges section in the user profile card.
  */
-function showBadgeNotification(badgeName) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 text-yellow-700 dark:text-yellow-200 p-4 rounded shadow-md transition-opacity duration-500';
-    notification.style.zIndex = '50';
-    notification.innerHTML = `
-        <div class="flex items-center">
-            <div class="py-1">
-                <svg class="h-6 w-6 text-yellow-500 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+function updateBadgesDisplay(badges) {
+    const container = document.getElementById('user-badges-container');
+    if (!container) return;
+
+    // Clear the static, hardcoded badges from the HTML
+    container.innerHTML = '';
+
+    if (!badges || badges.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-500 col-span-3">No badges earned yet. Start trading to earn some!</p>';
+        return;
+    }
+
+    // Display the badges the user has actually earned
+    badges.forEach(badgeName => {
+        const badgeElement = document.createElement('div');
+        badgeElement.className = 'flex flex-col items-center';
+        // A simple icon for all badges for now
+        badgeElement.innerHTML = `
+            <div class="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <svg class="h-8 w-8 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
-            <div>
-                <p class="font-bold">New Badge Earned!</p>
-                <p class="text-sm">Congratulations! You've earned the ${badgeName}.</p>
-            </div>
-        </div>
-    `;
-    
-    // Add to document
+            <span class="mt-2 text-xs text-center text-gray-500 dark:text-gray-400">${badgeName}</span>
+        `;
+        container.appendChild(badgeElement);
+    });
+}
+
+/**
+ * Helper function to get a category's display name.
+ */
+function getCategoryLabel(categoryKey) {
+    const labels = {
+        'vegetables': 'Vegetables', 'fruits': 'Fruits', 'organic-waste': 'Organic Waste',
+        'solar-energy': 'Solar Energy', 'homemade-products': 'Homemade Products',
+        'reusing-materials': 'Reusing Materials', 'saving-water': 'Saving Water', 'other': 'Other'
+    };
+    return labels[categoryKey] || 'Other';
+}
+
+/**
+ * Shows a confirmation toast for a successful trade.
+ */
+function showTradeConfirmation(points) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed bottom-4 right-4 bg-green-100 dark:bg-green-900 border-l-4 border-green-500 text-green-700 dark:text-green-200 p-4 rounded shadow-lg transition-transform duration-300 translate-y-full';
+    notification.innerHTML = `<strong>Trade Created!</strong> You earned +${points} CKC points.`;
     document.body.appendChild(notification);
-    
-    // Remove after 7 seconds
+    setTimeout(() => notification.classList.remove('translate-y-full'), 100);
     setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 500);
+        notification.classList.add('translate-y-full');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+/**
+ * Shows a notification toast for a new badge earned.
+ */
+function showBadgeNotification(badgeName) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 text-yellow-700 dark:text-yellow-200 p-4 rounded shadow-lg transition-transform duration-300 -translate-y-full';
+    notification.innerHTML = `<strong>New Badge Earned!</strong> Congratulations, you've earned the ${badgeName}.`;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.remove('-translate-y-full'), 100);
+    setTimeout(() => {
+        notification.classList.add('-translate-y-full');
+        setTimeout(() => notification.remove(), 300);
     }, 7000);
 }
