@@ -269,79 +269,36 @@ function addSeekingField() {
  * Submit the trade form
  */
 function submitTradeForm() {
-    // Get form data
-    const username = document.getElementById('trade-username').value;
-    const fullName = document.getElementById('trade-fullname').value;
-    const category = document.getElementById('trade-category').value;
-    
-    // Get offerings
-    const offeringItems = [];
-    const offeringInputs = document.querySelectorAll('input[name="offering-item[]"]');
-    const offeringPointsInputs = document.querySelectorAll('input[name="offering-points[]"]');
-    
-    for (let i = 0; i < offeringInputs.length; i++) {
-        if (offeringInputs[i].value.trim() !== '') {
-            offeringItems.push({
-                description: offeringInputs[i].value,
-                points: parseInt(offeringPointsInputs[i].value || 0)
-            });
-        }
-    }
-    
-    // Get seeking items
-    const seekingItems = [];
-    const seekingInputs = document.querySelectorAll('input[name="seeking-item[]"]');
-    const seekingPointsInputs = document.querySelectorAll('input[name="seeking-points[]"]');
-    
-    for (let i = 0; i < seekingInputs.length; i++) {
-        if (seekingInputs[i].value.trim() !== '') {
-            seekingItems.push({
-                description: seekingInputs[i].value,
-                points: parseInt(seekingPointsInputs[i].value || 0)
-            });
-        }
-    }
-    
-    // Calculate total points
-    const categoryPoints = CATEGORY_POINTS[category] || 0;
-    let totalPoints = categoryPoints;
-    
-    // Add points from offerings and seeking items
-    offeringItems.forEach(item => totalPoints += item.points);
-    seekingItems.forEach(item => totalPoints += item.points);
-    
-    // Create trade object
-    const trade = {
-        id: Date.now().toString(),
-        username,
-        fullName,
-        category,
-        offerings: offeringItems,
-        seeking: seekingItems,
-        totalPoints,
-        timestamp: new Date().toISOString()
+    const tradeData = {
+        username: document.getElementById('trade-username').value,
+        fullName: document.getElementById('trade-fullname').value,
+        category: document.getElementById('trade-category').value,
+        offerings: Array.from(document.querySelectorAll('input[name="offering-item[]"]')).map(input => input.value),
+        seeking: Array.from(document.querySelectorAll('input[name="seeking-item[]"]')).map(input => input.value),
+        totalPoints: calculateTotalPoints()
     };
-    
-    // Save trade to local storage
-    saveTrade(trade);
-    
-    // Update user points
-    updateUserPoints(totalPoints);
-    
-    // Update leaderboard
-    updateLeaderboard();
-    
-    // Add trade to table
-    addTradeToTable(trade);
-    
-    // Check for badge awards
-    checkForBadges(category, totalPoints);
-    
-    // Show confirmation message
-    showConfirmation(`Trade created successfully! You earned +${totalPoints} CKC points.`);
-    
-    // Hide the form
-    toggleCreateTradeForm();
+
+    fetch('/api/trades', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tradeData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to create trade');
+        }
+        return response.json();
+    })
+    .then(trade => {
+        addTradeToTable(trade);
+        showNotification('Trade created successfully!', 'success');
+    })
+    .catch(error => {
+        console.error('Error creating trade:', error);
+        showNotification('Failed to create trade. Please try again later.', 'error');
+    });
 }
 
 /**
@@ -357,10 +314,25 @@ function saveTrade(trade) {
  * Load trades from local storage
  */
 function loadTrades() {
-    const trades = JSON.parse(localStorage.getItem('trades')) || [];
-    
-    // Add trades to table
-    trades.forEach(trade => addTradeToTable(trade));
+    fetch('/api/trades', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch trades');
+        }
+        return response.json();
+    })
+    .then(trades => {
+        trades.forEach(trade => addTradeToTable(trade));
+    })
+    .catch(error => {
+        console.error('Error fetching trades:', error);
+        showNotification('Failed to load trades. Please try again later.', 'error');
+    });
 }
 
 /**

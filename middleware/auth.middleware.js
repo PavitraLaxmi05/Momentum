@@ -11,19 +11,24 @@ const protect = async (req, res, next) => {
   // Check for token in Authorization header
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
+    console.log('Authorization header found. Extracted token:', token);
+  } else {
+    console.warn('Authorization header missing or malformed');
   }
 
   if (!token) {
+    console.error('No token provided, authorization denied');
     return next(new ErrorResponse('No token provided, authorization denied', 401));
   }
 
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Token verified successfully. Decoded payload:', decoded);
     req.user = decoded; // { id: userId, role: userRole }
     next();
   } catch (error) {
-    console.error('JWT verification error:', error.message, error.stack);
+    console.error('JWT verification error:', error.message);
     return next(new ErrorResponse('Invalid token, authorization denied', 401));
   }
 };

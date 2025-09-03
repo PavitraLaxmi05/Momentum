@@ -6,6 +6,7 @@ const path = require('path');
 const axios = require('axios');
 const User = require('../models/user.model');
 const CarbonFootprint = require('../models/carbon.model').CarbonFootprint;
+const Trade = require('../models/trade.model'); // Import Trade model
 const { extractDataFromBill } = require('./carbon.ocr');
 const { calculateEmissions, generateRecommendations, analyzeHistoricalData } = require('./carbon.calculator');
 
@@ -117,4 +118,26 @@ exports.calculateCarbonFootprint = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// Added controller functions for trades
+exports.getTrades = async (req, res) => {
+    try {
+        const trades = await Trade.find();
+        res.status(200).json(trades);
+    } catch (error) {
+        console.error('Error fetching trades:', error);
+        res.status(500).json({ message: 'Failed to fetch trades' });
+    }
+};
+
+exports.createTrade = async (req, res) => {
+    try {
+        const trade = new Trade(req.body);
+        await trade.save();
+        res.status(201).json(trade);
+    } catch (error) {
+        console.error('Error creating trade:', error);
+        res.status(500).json({ message: 'Failed to create trade' });
+    }
 };

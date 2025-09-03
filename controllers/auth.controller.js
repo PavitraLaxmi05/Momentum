@@ -144,7 +144,7 @@ exports.updateProfile = async (req, res, next) => {
     // Handle profile picture upload if present
     if (req.file) {
       // Use the full path for the profile picture
-      updateData.profilePicture = `/uploads/${req.file.filename}`;
+      updateData.profilePicture = req.file.filename;
     }
 
     // Update user profile

@@ -24,6 +24,56 @@ function checkAuth() {
 }
 
 /**
+ * Load user profile data from the API or local storage for dev mode
+ */
+function loadUserProfile() {
+    const token = localStorage.getItem('token');
+    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    if (isDev) {
+        console.log('Development mode: Loading profile from local storage');
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            // ** NEW CODE: Check for a persisted development profile picture **
+            const devProfilePic = localStorage.getItem('dev_profile_picture');
+            if (devProfilePic) {
+                user.profilePicture = devProfilePic;
+            }
+            // ** END NEW CODE **
+        } else {
+            console.error('No user data found in local storage for dev mode.');
+            showNotification('Could not load profile data for development.', 'error');
+        }
+        return;
+    }
+
+    // In production mode, use real API
+    fetch('/api/auth/me', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch profile');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Store the latest user data and display it
+        localStorage.setItem('user', JSON.stringify(data));
+        displayUserProfile(data);
+    })
+    .catch(error => {
+        console.error('Error fetching profile:', error);
+        showNotification('Failed to load profile data. Please try again later.', 'error');
+    });
+}
+
+
+/**
  * Initialize UI components and event listeners
  */
 function initializeUI() {
@@ -136,70 +186,10 @@ function initializeUI() {
 }
 
 /**
- * Load user profile data from the API
- */
-function loadUserProfile() {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
-    
-    // Check if we're in development mode (using local server)
-    const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    if (isDev && user) {
-        // In development mode, use the user data from localStorage
-        console.log('Development mode: Using mock profile data');
-        displayUserProfile(user);
-        return;
-    }
-    
-    // In production mode, use real API
-    fetch('/api/auth/me', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch profile');
-        }
-        return response.json();
-    })
-    .then(data => {
-        displayUserProfile(data);
-    })
-    .catch(error => {
-        console.error('Error fetching profile:', error);
-        
-        // If API call fails in development, try to use localStorage data as fallback
-        if (isDev && user) {
-            console.log('Falling back to localStorage user data');
-            displayUserProfile(user);
-            return;
-        }
-        
-        showNotification('Failed to load profile data. Please try again later.', 'error');
-    });
-}
-
-/**
  * Display user profile data in the UI
  */
 function displayUserProfile(user) {
     try {
-        // Update sidebar username
-        const sidebarUsername = document.getElementById('sidebar-username');
-        const mobileSidebarUsername = document.getElementById('mobile-sidebar-username');
-        
-        if (sidebarUsername) {
-            sidebarUsername.textContent = user.username || 'User';
-        }
-        
-        if (mobileSidebarUsername) {
-            mobileSidebarUsername.textContent = user.username || 'User';
-        }
-        
         // Update profile view fields
         const profileName = document.getElementById('profile-name');
         if (profileName) {
@@ -219,6 +209,7 @@ function displayUserProfile(user) {
         // Update profile picture
         const profilePicture = document.getElementById('profile-picture');
         if (profilePicture) {
+            // Use a consistent path for the default avatar
             profilePicture.src = user.profilePicture ? 
                 `/uploads/${user.profilePicture}` : 
                 '../public/images/default-avatar.png';
@@ -249,15 +240,13 @@ function displayUserProfile(user) {
             sustainabilityBar.style.width = `${percentage}%`;
             
             // Add color based on score
+            sustainabilityBar.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500'); // Reset classes
             if (percentage >= 70) {
                 sustainabilityBar.classList.add('bg-green-500');
-                sustainabilityBar.classList.remove('bg-yellow-500', 'bg-red-500');
             } else if (percentage >= 40) {
                 sustainabilityBar.classList.add('bg-yellow-500');
-                sustainabilityBar.classList.remove('bg-green-500', 'bg-red-500');
             } else {
                 sustainabilityBar.classList.add('bg-red-500');
-                sustainabilityBar.classList.remove('bg-green-500', 'bg-yellow-500');
             }
         }
         
@@ -286,9 +275,10 @@ function populateEditForm() {
     // Update profile picture preview
     const profilePicturePreview = document.getElementById('profile-picture-preview');
     if (profilePicturePreview) {
+        // Corrected the path to be consistent
         profilePicturePreview.src = user.profilePicture ? 
             `/uploads/${user.profilePicture}` : 
-            '../images/default-avatar.png';
+            '../public/images/default-avatar.png';
         profilePicturePreview.classList.remove('hidden');
     }
 }
@@ -346,60 +336,63 @@ function updateProfile() {
         // Check if we're in development mode (using local server)
         const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
+
         if (isDev) {
-            // In development mode, update the user data directly in localStorage
             console.log('Development mode: Updating profile locally');
-            
-            // Get form data values
-            const username = formData.get('username');
-            const email = formData.get('email');
-            const bio = formData.get('bio');
-            const interests = formData.get('interests');
-            
-            // Update local storage with new user data
+
             const currentUser = JSON.parse(localStorage.getItem('user')) || {};
-            const updatedUser = { 
+            const updatedUser = {
                 ...currentUser,
-                username: username || currentUser.username,
-                email: email || currentUser.email,
-                bio: bio || currentUser.bio,
-                interests: interests || currentUser.interests
+                firstName: formData.get('firstName') || currentUser.firstName,
+                lastName: formData.get('lastName') || currentUser.lastName,
+                username: formData.get('username') || currentUser.username,
             };
-            
-            // If there's a profile image, create a mock URL
-            const profileImage = formData.get('profileImage');
-            if (profileImage && profileImage.name) {
-                // Create a mock avatar URL
-                updatedUser.avatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(username || currentUser.username);
+
+            const profileImageFile = formData.get('profilePicture');
+
+            const finishUpdate = (userData) => {
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                const viewMode = document.getElementById('profile-view-mode');
+                const editMode = document.getElementById('profile-edit-mode');
+                if (viewMode && editMode) {
+                    viewMode.classList.remove('hidden');
+                    editMode.classList.add('hidden');
+                }
+
+                displayUserProfile(userData);
+                loadUserProfileHeader(); // From common.js
+                showNotification('Profile updated successfully', 'success');
+                restoreButton();
+            };
+
+            // If a new image was uploaded, convert it to a Data URL to store in localStorage
+            // If a new image was uploaded, convert it to a Data URL to store in localStorage
+            if (profileImageFile) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // This is the base64 string representing the image
+                    const imageAsDataURL = e.target.result;
+                    updatedUser.profilePicture = imageAsDataURL;
+
+                    // ** CORRECT LOCATION: Save the picture for the next session HERE **
+                    localStorage.setItem('dev_profile_picture', imageAsDataURL);
+
+                    finishUpdate(updatedUser);
+                };
+                reader.onerror = () => {
+                    showNotification('Could not read the image file.', 'error');
+                    restoreButton();
+                };
+                reader.readAsDataURL(profileImageFile);
+
+            } else {
+                // If no new image, just save the other updated data
+                finishUpdate(updatedUser);
             }
-            
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            
-            // Switch back to view mode and refresh display
-            const viewMode = document.getElementById('profile-view-mode');
-            const editMode = document.getElementById('profile-edit-mode');
-            
-            if (viewMode && editMode) {
-                viewMode.classList.remove('hidden');
-                editMode.classList.add('hidden');
-            }
-            
-            displayUserProfile(updatedUser);
-            
-            // Update user profile information across all pages
-            loadUserProfileHeader();
-            
-            showNotification('Profile updated successfully', 'success');
-            
-            // Restore button if it exists
-            if (saveButton) {
-                saveButton.disabled = false;
-                saveButton.innerHTML = 'Save';
-            }
-            
             return;
         }
-        
+
         // In production mode, use real API
         fetch('/api/auth/updateprofile', {
             method: 'PUT',
@@ -802,6 +795,24 @@ function loadUserIdeas() {
     }
 }
 
+/**
+ * Define displayUserIdeas function
+ */
+function displayUserIdeas(ideas) {
+    const ideasContainer = document.getElementById('user-ideas-container');
+    if (!ideasContainer) return;
+
+    ideasContainer.innerHTML = '';
+    ideas.forEach(idea => {
+        const ideaElement = document.createElement('div');
+        ideaElement.className = 'idea-item';
+        ideaElement.innerHTML = `
+            <h3>${idea.title}</h3>
+            <p>${idea.description}</p>
+        `;
+        ideasContainer.appendChild(ideaElement);
+    });
+}
 
 /**
  * Create an HTML element for an idea with enhanced display and error handling

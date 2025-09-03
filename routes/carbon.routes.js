@@ -9,7 +9,9 @@ const {
   getCarbonTips,
   getEnergyData,
   setMonthlyGoal,
-  calculateCarbonFootprint
+  calculateCarbonFootprint,
+  getTrades,
+  createTrade
 } = require('../controllers/carbon.controller');
 const { protect } = require('../middleware/auth.middleware');
 
@@ -66,5 +68,10 @@ router.route('/goal')
 // New route for calculating carbon footprint
 router.route('/calculate')
   .post(upload.single('bill'), calculateCarbonFootprint);
+
+// Added routes for trade creation and fetching
+router.route('/trades')
+  .get(getTrades)
+  .post(createTrade);
 
 module.exports = router;

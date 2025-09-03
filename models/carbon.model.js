@@ -135,7 +135,19 @@ carbonFootprintSchema.pre('save', function(next) {
   next();
 });
 
+// Added schema for trades
+const tradeSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    fullName: { type: String, required: true },
+    category: { type: String, required: true },
+    offerings: [{ type: String, required: true }],
+    seeking: [{ type: String, required: true }],
+    totalPoints: { type: Number, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
 const CarbonEntry = mongoose.model('CarbonEntry', carbonEntrySchema);
 const CarbonFootprint = mongoose.model('CarbonFootprint', carbonFootprintSchema);
+const Trade = mongoose.model('Trade', tradeSchema);
 
-module.exports = { CarbonEntry, CarbonFootprint };
+module.exports = { CarbonEntry, CarbonFootprint, Trade };
