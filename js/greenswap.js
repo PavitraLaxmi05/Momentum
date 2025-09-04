@@ -38,17 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
         tradeCategory.addEventListener('change', updateCategoryPoints);
     }
     
-    const tradeForm = document.getElementById('create-trade-form');
-    if (tradeForm) {
-        tradeForm.addEventListener('submit', handleTradeFormSubmit);
-        const cancelBtn = tradeForm.querySelector('button[type="button"]');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleCreateTradeForm();
-            });
-        }
-    }
+    const tradeForm = document.getElementById('create-trade-form-inner');
+    const cancelBtn = document.getElementById('trade-cancel-btn');
+    if (tradeForm) tradeForm.addEventListener('submit', handleTradeFormSubmit);
+    if (cancelBtn) cancelBtn.addEventListener('click', (e) => { e.preventDefault(); toggleCreateTradeForm(); });
 });
 
 /**
@@ -87,19 +80,17 @@ function updateProfileCard(user) {
  * Toggles the visibility of the create trade form.
  */
 function toggleCreateTradeForm() {
-    const form = document.getElementById('create-trade-form');
-    const isHidden = form.classList.contains('hidden');
-
+    const modal = document.getElementById('create-trade-form');
+    const isHidden = modal.classList.contains('hidden');
     if (isHidden) {
-        form.reset();
+        const inner = document.getElementById('create-trade-form-inner');
+        if (inner) inner.reset();
         populateUserProfileData();
         updateCategoryPoints();
-        // Clear form fields
         document.getElementById('trade-offering').value = '';
         document.getElementById('trade-seeking').value = '';
     }
-    
-    form.classList.toggle('hidden');
+    modal.classList.toggle('hidden');
 }
 
 /**
@@ -132,7 +123,7 @@ function updateCategoryPoints() {
 /**
  * Handles the submission of the trade form.
  */
-function handleTradeFormSubmit(event) {
+async function handleTradeFormSubmit(event) {
     event.preventDefault();
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) {
@@ -159,12 +150,45 @@ function handleTradeFormSubmit(event) {
         timestamp: new Date().toISOString()
     };
 
-    // Save and update UI
-    addTradeToLocalStorage(trade);
-    addTradeToTable(trade);
-    updateUserPoints(totalPoints, category);
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/trades', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+            body: JSON.stringify({ offering, seeking, category })
+        });
+        if (res.ok) {
+            const json = await res.json();
+            const saved = json.data.trade;
+            const updatedUser = json.data.updatedUser;
+            addTradeToTable({
+                username: saved.username,
+                profilePicture: user.profilePicture,
+                category: saved.category,
+                offering: saved.offering,
+                seeking: saved.seeking,
+                totalPoints: saved.ckcPoints
+            });
+            // update user points in local storage for realtime reflection
+            user.sustainabilityScore = updatedUser.sustainabilityScore;
+            localStorage.setItem('user', JSON.stringify(user));
+            updateProfileCard(user);
+            updateLeaderboard();
+            showTradeConfirmation(totalPoints);
+        } else {
+            // fallback to local flow
+            addTradeToLocalStorage(trade);
+            addTradeToTable(trade);
+            updateUserPoints(totalPoints, category);
+            showTradeConfirmation(totalPoints);
+        }
+    } catch (e) {
+        addTradeToLocalStorage(trade);
+        addTradeToTable(trade);
+        updateUserPoints(totalPoints, category);
+        showTradeConfirmation(totalPoints);
+    }
     toggleCreateTradeForm();
-    showTradeConfirmation(totalPoints);
     
     console.log('Trade created successfully:', trade);
 }
@@ -216,13 +240,27 @@ function addTradeToTable(trade) {
 /**
  * Loads all trades from local storage and displays them.
  */
-function loadTradesFromLocalStorage() {
-    const trades = JSON.parse(localStorage.getItem('trades')) || [];
+async function loadTradesFromLocalStorage() {
     const tableBody = document.getElementById('trades-table-body');
     if (!tableBody) return;
-    tableBody.innerHTML = ''; // Clear existing static rows
-    trades.reverse().forEach(trade => addTradeToTable(trade)); // Show newest first
-    console.log('Trades loaded from local storage:', trades);
+    tableBody.innerHTML = '';
+    try {
+        const res = await fetch('/api/trades');
+        if (res.ok) {
+            const json = await res.json();
+            json.data.forEach(trade => addTradeToTable({
+                username: trade.username,
+                profilePicture: (JSON.parse(localStorage.getItem('user'))||{}).profilePicture,
+                category: trade.category,
+                offering: trade.offering,
+                seeking: trade.seeking,
+                totalPoints: trade.ckcPoints
+            }));
+            return;
+        }
+    } catch(e) {}
+    const trades = JSON.parse(localStorage.getItem('trades')) || [];
+    trades.reverse().forEach(trade => addTradeToTable(trade));
 }
 
 /**
