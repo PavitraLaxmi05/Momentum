@@ -32,20 +32,18 @@ function loadUserProfile() {
     if (isDev) {
         console.log('Development mode: Loading profile from local storage');
         const user = JSON.parse(localStorage.getItem('user'));
-        
+
         if (user) {
-            // Create a temporary copy for display only. This prevents the large
-            // image string from ever being part of the main 'user' object.
-            const displayUser = { ...user };
+            // Check for base64 profile picture in localStorage
             const devProfilePic = localStorage.getItem('dev_profile_picture');
             if (devProfilePic) {
-                displayUser.profilePicture = devProfilePic;
+                // Use base64 data directly for display
+                user.profilePicture = devProfilePic;
             }
-            
-            // Use the temporary displayUser object to populate the page
-            setTimeout(() => displayUserProfile(displayUser), 100);
+
+            setTimeout(() => displayUserProfile(user), 100);
         } else {
-             console.error('No user data found in local storage for dev mode.');
+            console.error('No user data found in local storage for dev mode.');
         }
         return;
     }
@@ -201,10 +199,19 @@ function displayUserProfile(user) {
         // Update profile picture
         const profilePicture = document.getElementById('profile-picture');
         if (profilePicture) {
-            // Use a consistent path for the default avatar
-            profilePicture.src = user.profilePicture ? 
-                `/uploads/${user.profilePicture}` : 
-                '../public/images/default-avatar.png';
+            if (user.profilePicture) {
+                // Check if it's a base64 data URL or a file path
+                if (user.profilePicture.startsWith('data:image/')) {
+                    // It's a base64 data URL, use it directly
+                    profilePicture.src = user.profilePicture;
+                } else {
+                    // It's a file path, prepend the uploads path
+                    profilePicture.src = `/uploads/${user.profilePicture}`;
+                }
+            } else {
+                // Use default avatar
+                profilePicture.src = '/public/images/default-avatar.png';
+            }
         }
         
         // Format and display creation date
@@ -267,10 +274,19 @@ function populateEditForm() {
     // Update profile picture preview
     const profilePicturePreview = document.getElementById('profile-picture-preview');
     if (profilePicturePreview) {
-        // Corrected the path to be consistent
-        profilePicturePreview.src = user.profilePicture ? 
-            `/uploads/${user.profilePicture}` : 
-            '../public/images/default-avatar.png';
+        if (user.profilePicture) {
+            // Check if it's a base64 data URL or a file path
+            if (user.profilePicture.startsWith('data:image/')) {
+                // It's a base64 data URL, use it directly
+                profilePicturePreview.src = user.profilePicture;
+            } else {
+                // It's a file path, prepend the uploads path
+                profilePicturePreview.src = `/uploads/${user.profilePicture}`;
+            }
+        } else {
+            // Use default avatar
+            profilePicturePreview.src = '/public/images/default-avatar.png';
+        }
         profilePicturePreview.classList.remove('hidden');
     }
 }
@@ -327,16 +343,20 @@ function updateProfile() {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const imageAsDataURL = e.target.result;
-                    // Save the large image string ONLY to its separate key
+                    // Save the base64 image string to localStorage
                     localStorage.setItem('dev_profile_picture', imageAsDataURL);
                     currentUser.profilePicture = imageAsDataURL; // Add for immediate display
+                    localStorage.setItem('user', JSON.stringify(currentUser)); // Update user object
                     finishUpdate(currentUser);
                 };
                 reader.readAsDataURL(profileImageFile);
             } else {
                 // If no new image, use the existing one for display
                 const devProfilePic = localStorage.getItem('dev_profile_picture');
-                if (devProfilePic) currentUser.profilePicture = devProfilePic;
+                if (devProfilePic) {
+                    currentUser.profilePicture = devProfilePic;
+                    localStorage.setItem('user', JSON.stringify(currentUser)); // Update user object
+                }
                 finishUpdate(currentUser);
             }
             return;
