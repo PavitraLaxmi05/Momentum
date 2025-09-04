@@ -5,6 +5,22 @@
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize user data if not present
+    if (!localStorage.getItem('user')) {
+        const defaultUser = {
+            username: 'EcoUser',
+            firstName: 'Eco',
+            lastName: 'User',
+            email: 'eco.user@example.com',
+            location: 'Green City',
+            profilePicture: '../public/images/default-avatar.png',
+            sustainabilityScore: 100,
+            badges: ['New Member'],
+            categoryPoints: {}
+        };
+        localStorage.setItem('user', JSON.stringify(defaultUser));
+    }
+    
     loadUserProfileAndBadges();
     
     // Clear static HTML content and load dynamic data
@@ -12,19 +28,26 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLeaderboard();
 
     // Attach event listeners
-    document.getElementById('create-trade-button')?.addEventListener('click', toggleCreateTradeForm);
-    document.getElementById('trade-category')?.addEventListener('change', updateCategoryPoints);
-    document.getElementById('add-offering-btn')?.addEventListener('click', addOfferingField);
-    document.getElementById('add-seeking-btn')?.addEventListener('click', addSeekingField);
+    const createTradeButton = document.getElementById('create-trade-button');
+    if (createTradeButton) {
+        createTradeButton.addEventListener('click', toggleCreateTradeForm);
+    }
+    
+    const tradeCategory = document.getElementById('trade-category');
+    if (tradeCategory) {
+        tradeCategory.addEventListener('change', updateCategoryPoints);
+    }
     
     const tradeForm = document.getElementById('create-trade-form');
     if (tradeForm) {
         tradeForm.addEventListener('submit', handleTradeFormSubmit);
         const cancelBtn = tradeForm.querySelector('button[type="button"]');
-        cancelBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleCreateTradeForm();
-        });
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleCreateTradeForm();
+            });
+        }
     }
 });
 
@@ -71,11 +94,9 @@ function toggleCreateTradeForm() {
         form.reset();
         populateUserProfileData();
         updateCategoryPoints();
-        // Clear dynamic fields and add one of each
-        document.getElementById('offerings-container').innerHTML = '';
-        document.getElementById('seeking-container').innerHTML = '';
-        addOfferingField();
-        addSeekingField();
+        // Clear form fields
+        document.getElementById('trade-offering').value = '';
+        document.getElementById('trade-seeking').value = '';
     }
     
     form.classList.toggle('hidden');
@@ -96,67 +117,17 @@ function populateUserProfileData() {
 }
 
 /**
- * Updates the category points display when the user selects a category.
+ * The updateCategoryPoints function has been removed as it's no longer needed with the fixed +10 points system
  */
 function updateCategoryPoints() {
-    const categorySelect = document.getElementById('trade-category');
     const categoryPointsDisplay = document.getElementById('category-points');
+    const points = 10; // Fixed +10 points for all trades
     
-    const categoryPoints = {
-        'vegetables': 10,
-        'fruits': 10,
-        'organic-waste': 12,
-        'solar-energy': 15,
-        'homemade-products': 8,
-        'reusing-materials': 20,
-        'saving-water': 10,
-        'other': 5
-    };
-    
-    const points = categoryPoints[categorySelect.value] || 0;
     categoryPointsDisplay.textContent = `+${points} points`;
     document.getElementById('category-points-value').value = points;
 }
 
-/**
- * Adds a new field for offering an item.
- */
-function addOfferingField() {
-    const container = document.getElementById('offerings-container');
-    if (container.children.length >= 5) return;
-
-    const newItem = document.createElement('div');
-    newItem.className = 'offering-item mt-3 flex items-center';
-    newItem.innerHTML = `
-        <input type="text" name="offering[]" class="flex-1 shadow-sm block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="Item description" required>
-        <input type="number" name="offering-points[]" class="ml-2 w-20 shadow-sm block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0" value="0">
-        <button type="button" class="remove-btn ml-2 p-1 text-white bg-red-600 hover:bg-red-700 rounded-full">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" /></svg>
-        </button>
-    `;
-    container.appendChild(newItem);
-    newItem.querySelector('.remove-btn').addEventListener('click', () => newItem.remove());
-}
-
-/**
- * Adds a new field for seeking an item.
- */
-function addSeekingField() {
-    const container = document.getElementById('seeking-container');
-    if (container.children.length >= 5) return;
-
-    const newItem = document.createElement('div');
-    newItem.className = 'seeking-item mt-3 flex items-center';
-    newItem.innerHTML = `
-        <input type="text" name="seeking[]" class="flex-1 shadow-sm block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="Item description" required>
-        <input type="number" name="seeking-points[]" class="ml-2 w-20 shadow-sm block sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md" placeholder="CKC" min="0" value="0">
-        <button type="button" class="remove-btn ml-2 p-1 text-white bg-red-600 hover:bg-red-700 rounded-full">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" /></svg>
-        </button>
-    `;
-    container.appendChild(newItem);
-    newItem.querySelector('.remove-btn').addEventListener('click', () => newItem.remove());
-}
+// The addOfferingField and addSeekingField functions have been removed as they are no longer needed with the simplified form
 
 /**
  * Handles the submission of the trade form.
@@ -171,19 +142,19 @@ function handleTradeFormSubmit(event) {
 
     // Collect data from form
     const category = document.getElementById('trade-category').value;
-    const offerings = Array.from(document.querySelectorAll('input[name="offering[]"]')).map(input => input.value);
-    const offeringPoints = Array.from(document.querySelectorAll('input[name="offering-points[]"]')).map(input => parseInt(input.value) || 0);
-    const seeking = Array.from(document.querySelectorAll('input[name="seeking[]"]')).map(input => input.value);
-    const categoryPointsValue = parseInt(document.getElementById('category-points-value').value) || 0;
-    const totalPoints = categoryPointsValue + offeringPoints.reduce((sum, points) => sum + points, 0);
+    const offering = document.getElementById('trade-offering').value;
+    const seeking = document.getElementById('trade-seeking').value;
+    
+    // Always award +10 CKC points for each new trade
+    const totalPoints = 10;
 
     const trade = {
         id: `trade_${Date.now()}`,
         username: user.username,
         profilePicture: user.profilePicture,
         category,
-        offerings: offerings.map((item, i) => ({ item, points: offeringPoints[i] })),
-        seeking: seeking.map((item, i) => ({ item, points: 0 })), // Assuming seeking points are just for show
+        offering: offering,
+        seeking: seeking,
         totalPoints,
         timestamp: new Date().toISOString()
     };
@@ -194,6 +165,8 @@ function handleTradeFormSubmit(event) {
     updateUserPoints(totalPoints, category);
     toggleCreateTradeForm();
     showTradeConfirmation(totalPoints);
+    
+    console.log('Trade created successfully:', trade);
 }
 
 /**
@@ -203,6 +176,7 @@ function addTradeToLocalStorage(trade) {
     const trades = JSON.parse(localStorage.getItem('trades')) || [];
     trades.push(trade);
     localStorage.setItem('trades', JSON.stringify(trades));
+    console.log('Trade added to local storage:', trade);
 }
 
 /**
@@ -216,16 +190,16 @@ function addTradeToTable(trade) {
     row.innerHTML = `
         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
             <div class="flex items-center">
-                <div class="h-10 w-10 flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" src="${trade.profilePicture || '../public/images/default-avatar.png'}" alt="User Avatar">
+                <div class="h-8 w-8 flex-shrink-0">
+                    <img class="h-8 w-8 rounded-full" src="${trade.profilePicture || '../public/images/default-avatar.png'}" alt="User Avatar">
                 </div>
                 <div class="ml-4">
                     <div class="font-medium text-gray-900 dark:text-white">${trade.username}</div>
                 </div>
             </div>
         </td>
-        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${trade.offerings.map(o => o.item).join(', ')}</td>
-        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${trade.seeking.map(s => s.item).join(', ')}</td>
+        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${trade.offering}</td>
+        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${trade.seeking}</td>
         <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${getCategoryLabel(trade.category)}</td>
         <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
@@ -233,7 +207,7 @@ function addTradeToTable(trade) {
             </span>
         </td>
         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-            <a href="#" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">Contact</a>
+            <a href="#" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Contact</a>
         </td>
     `;
     tableBody.prepend(row);
@@ -248,6 +222,7 @@ function loadTradesFromLocalStorage() {
     if (!tableBody) return;
     tableBody.innerHTML = ''; // Clear existing static rows
     trades.reverse().forEach(trade => addTradeToTable(trade)); // Show newest first
+    console.log('Trades loaded from local storage:', trades);
 }
 
 /**
@@ -267,6 +242,8 @@ function updateUserPoints(points, category) {
     updateProfileCard(user);
     updateLeaderboard();
     checkForBadgeAwards(); // Check for badges after points update
+    
+    console.log(`User points updated: +${points} points for ${category}. New total: ${user.sustainabilityScore}`);
 }
 
 /**
@@ -276,40 +253,83 @@ function updateLeaderboard() {
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user) return;
     
-    const leaderboardBody = document.querySelector('.leaderboard table tbody');
+    const leaderboardBody = document.getElementById('leaderboard-table-body');
     if (!leaderboardBody) return;
 
-    let userRow = Array.from(leaderboardBody.querySelectorAll('tr')).find(row => 
-        row.querySelector('.font-medium')?.textContent.trim() === user.username
-    );
+    // Clear existing leaderboard
+    leaderboardBody.innerHTML = '';
+    
+    // Add current user to leaderboard
+    const userRow = document.createElement('tr');
+    userRow.innerHTML = `
+        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-6">1</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm">
+            <div class="flex items-center">
+                <div class="h-8 w-8 flex-shrink-0">
+                    <img class="h-8 w-8 rounded-full" src="${user.profilePicture || '../public/images/default-avatar.png'}" alt="">
+                </div>
+                <div class="ml-4">
+                    <div class="font-medium text-gray-900 dark:text-white">${user.username}</div>
+                </div>
+            </div>
+        </td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${user.sustainabilityScore || 0}</td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                ${user.badges && user.badges.length > 0 ? user.badges[0] : 'New Member'}
+            </span>
+        </td>
+    `;
+    leaderboardBody.appendChild(userRow);
+    
+    // Add some sample users for demonstration
+    const sampleUsers = [
+        { username: 'EcoFriend', score: Math.floor(user.sustainabilityScore * 0.9) || 800, badge: 'Water Conservationist' },
+        { username: 'GreenThumb', score: Math.floor(user.sustainabilityScore * 0.8) || 700, badge: 'Energy Innovator' },
+        { username: 'EarthSaver', score: Math.floor(user.sustainabilityScore * 0.7) || 600, badge: 'Solar Adopter' },
+        { username: 'RecycleHero', score: Math.floor(user.sustainabilityScore * 0.6) || 500, badge: 'Waste Reducer' }
+    ];
+    
+    sampleUsers.forEach((sampleUser, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-6">${index + 2}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm">
+                <div class="flex items-center">
+                    <div class="h-8 w-8 flex-shrink-0">
+                        <img class="h-8 w-8 rounded-full" src="../public/images/default-avatar.png" alt="">
+                    </div>
+                    <div class="ml-4">
+                        <div class="font-medium text-gray-900 dark:text-white">${sampleUser.username}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">${sampleUser.score}</td>
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${getBadgeColor(index)} dark:bg-${getBadgeColor(index)}-900 text-${getBadgeColor(index)}-800 dark:text-${getBadgeColor(index)}-200">
+                    ${sampleUser.badge}
+                </span>
+            </td>
+        `;
+        leaderboardBody.appendChild(row);
+    });
+}
 
-    if (userRow) {
-        userRow.querySelector('td:nth-child(3)').textContent = user.sustainabilityScore;
-    }
-
-    sortLeaderboard();
+/**
+ * Helper function to get badge color based on index
+ */
+function getBadgeColor(index) {
+    const colors = ['blue', 'yellow', 'green', 'pink'];
+    return colors[index % colors.length];
 }
 
 /**
  * Sorts the leaderboard table by points in descending order.
+ * Note: This function is no longer needed since we rebuild the leaderboard in updateLeaderboard()
  */
 function sortLeaderboard() {
-    const leaderboardBody = document.querySelector('.leaderboard table tbody');
-    if (!leaderboardBody) return;
-
-    const rows = Array.from(leaderboardBody.querySelectorAll('tr'));
-    rows.sort((a, b) => {
-        const pointsA = parseInt(a.cells[2].textContent) || 0;
-        const pointsB = parseInt(b.cells[2].textContent) || 0;
-        return pointsB - pointsA;
-    });
-
-    // Re-append sorted rows and update ranks
-    leaderboardBody.innerHTML = '';
-    rows.forEach((row, index) => {
-        row.cells[0].textContent = index + 1;
-        leaderboardBody.appendChild(row);
-    });
+    // This functionality is now handled in updateLeaderboard
+    return;
 }
 
 /**

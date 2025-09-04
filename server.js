@@ -131,6 +131,7 @@ const ideaRoutes = require('./routes/idea.routes');
 const carbonRoutes = require('./routes/carbon.routes');
 const ecobotRoutes = require('./routes/ecobot.routes');
 const productRoutes = require('./routes/product.routes');
+const sustainabilityRoutes = require('./routes/sustainability.routes');
 
 const wisdomBotRoutes = require('./routes/wisdomBot.routes');
 
@@ -141,6 +142,7 @@ app.use('/api/ideas', ideaRoutes);
 app.use('/api/carbon', carbonRoutes);
 app.use('/api/ecobot', ecobotRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/sustainability', sustainabilityRoutes);
 
 app.use('/api/wisdom', wisdomBotRoutes);
 
