@@ -798,8 +798,53 @@
                 });
             }
             
-            // Generate initial Farm to Flat matches
-            generateFarmToFlatMatches();
+            // Generate initial Farm to Flat matches from backend if available
+            (async function refreshMatchesFromBackend(){
+                try {
+                    const [farmerRes, communityRes] = await Promise.all([
+                        fetch('/api/circularity/farmers'),
+                        fetch('/api/circularity/communities')
+                    ]);
+                    if (farmerRes.ok) {
+                        const json = await farmerRes.json();
+                        if (json && Array.isArray(json.data)) {
+                            farmerResources.length = 0;
+                            json.data.forEach(item => {
+                                farmerResources.push({
+                                    name: item.name,
+                                    location: item.location,
+                                    contact: item.contact,
+                                    resource: item.resource,
+                                    quantity: (item.quantity || 0) + ' lbs/week',
+                                    points: item.points || '0',
+                                    description: item.description || ''
+                                });
+                            });
+                        }
+                    }
+                    if (communityRes.ok) {
+                        const json = await communityRes.json();
+                        if (json && Array.isArray(json.data)) {
+                            communityNeeds.length = 0;
+                            json.data.forEach(item => {
+                                communityNeeds.push({
+                                    repName: item.representativeName,
+                                    communityName: item.communityName,
+                                    location: item.location,
+                                    contact: item.contact,
+                                    need: item.need,
+                                    quantity: (item.quantity || 0) + ' lbs/week',
+                                    points: item.points || '0',
+                                    description: item.description || ''
+                                });
+                            });
+                        }
+                    }
+                } catch(e) {
+                    console.warn('Farm to Flat: failed to fetch backend data', e);
+                }
+                generateFarmToFlatMatches();
+            })();
             
             // Add waste streams to map
             wasteStreams.forEach(waste => {
@@ -904,11 +949,23 @@
             
             // Modal handling for Farmer Resources
             const farmerModal = document.getElementById('farmer-modal');
-            const addFarmerBtn = document.getElementById('farmer-resources');
+            const addFarmerBtn = document.getElementById('add-farmer');
             const cancelFarmerBtn = document.getElementById('cancel-farmer');
             const submitFarmerBtn = document.getElementById('submit-farmer');
             
             addFarmerBtn.addEventListener('click', function() {
+                // Prefill from logged-in user if available
+                try {
+                    const user = JSON.parse(localStorage.getItem('user')) || null;
+                    if (user) {
+                        const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || '';
+                        const email = user.email || '';
+                        const nameInput = document.getElementById('farmer-name');
+                        const contactInput = document.getElementById('farmer-contact');
+                        if (nameInput && !nameInput.value) nameInput.value = fullName;
+                        if (contactInput && !contactInput.value) contactInput.value = email;
+                    }
+                } catch (e) {}
                 farmerModal.classList.remove('hidden');
             });
             
@@ -916,39 +973,74 @@
                 farmerModal.classList.add('hidden');
             });
             
-            submitFarmerBtn.addEventListener('click', function() {
-                // In a real application, this would add the new farmer resource to the map and database
+            submitFarmerBtn.addEventListener('click', async function() {
                 const farmerName = document.getElementById('farmer-name').value;
                 const farmerLocation = document.getElementById('farmer-location').value;
                 const farmerContact = document.getElementById('farmer-contact').value;
-                const farmerResource = document.getElementById('farmer-resource').value;
+                const farmerResource = document.getElementById('farmer-resources').value;
                 const farmerQuantity = document.getElementById('farmer-quantity').value;
-                
-                // Add to sample data for demonstration
+                const farmerPoints = document.getElementById('farmer-points').value;
+                const farmerDescription = document.getElementById('farmer-description').value;
+
+                // Optimistically add to UI dataset
                 farmerResources.push({
                     name: farmerName,
                     location: farmerLocation,
                     contact: farmerContact,
                     resource: farmerResource,
                     quantity: farmerQuantity + ' lbs/kg',
-                    points: document.getElementById('farmer-points').value,
-                    description: document.getElementById('farmer-description').value
+                    points: farmerPoints,
+                    description: farmerDescription
                 });
-                
-                // Generate new Farm to Flat matches
+
+                // Persist to backend if available
+                try {
+                    const token = localStorage.getItem('token');
+                    await fetch('/api/circularity/farmers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        },
+                        body: JSON.stringify({
+                            name: farmerName,
+                            location: farmerLocation,
+                            contact: farmerContact,
+                            resource: farmerResource,
+                            quantity: Number(farmerQuantity),
+                            points: farmerPoints ? Number(farmerPoints) : undefined,
+                            description: farmerDescription
+                        })
+                    });
+                } catch (e) {
+                    console.warn('Failed to save farmer resource to backend:', e);
+                }
+
+                // Refresh matches
                 generateFarmToFlatMatches();
-                
-                alert('Farmer resources added to map!');
+                alert('Farmer resources submitted!');
                 farmerModal.classList.add('hidden');
             });
             
             // Modal handling for Community Needs
             const communityModal = document.getElementById('community-modal');
-            const addCommunityBtn = document.getElementById('community-needs');
+            const addCommunityBtn = document.getElementById('add-community');
             const cancelCommunityBtn = document.getElementById('cancel-community');
             const submitCommunityBtn = document.getElementById('submit-community');
             
             addCommunityBtn.addEventListener('click', function() {
+                // Prefill from logged-in user if available
+                try {
+                    const user = JSON.parse(localStorage.getItem('user')) || null;
+                    if (user) {
+                        const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || '';
+                        const email = user.email || '';
+                        const repNameInput = document.getElementById('community-rep-name');
+                        const contactInput = document.getElementById('community-contact');
+                        if (repNameInput && !repNameInput.value) repNameInput.value = fullName;
+                        if (contactInput && !contactInput.value) contactInput.value = email;
+                    }
+                } catch (e) {}
                 communityModal.classList.remove('hidden');
             });
             
@@ -956,16 +1048,17 @@
                 communityModal.classList.add('hidden');
             });
             
-            submitCommunityBtn.addEventListener('click', function() {
-                // In a real application, this would add the new community need to the map and database
+            submitCommunityBtn.addEventListener('click', async function() {
                 const repName = document.getElementById('community-rep-name').value;
                 const communityName = document.getElementById('community-name').value;
                 const communityLocation = document.getElementById('community-location').value;
                 const communityContact = document.getElementById('community-contact').value;
                 const communityNeed = document.getElementById('community-needs').value;
                 const communityQuantity = document.getElementById('community-quantity').value;
-                
-                // Add to sample data for demonstration
+                const communityPoints = document.getElementById('community-points').value;
+                const communityDescription = document.getElementById('community-description').value;
+
+                // Optimistically add to UI dataset
                 communityNeeds.push({
                     repName: repName,
                     communityName: communityName,
@@ -973,14 +1066,37 @@
                     contact: communityContact,
                     need: communityNeed,
                     quantity: communityQuantity + ' lbs/kg',
-                    points: document.getElementById('community-points').value,
-                    description: document.getElementById('community-description').value
+                    points: communityPoints,
+                    description: communityDescription
                 });
-                
-                // Generate new Farm to Flat matches
+
+                // Persist to backend if available
+                try {
+                    const token = localStorage.getItem('token');
+                    await fetch('/api/circularity/communities', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        },
+                        body: JSON.stringify({
+                            representativeName: repName,
+                            communityName,
+                            location: communityLocation,
+                            contact: communityContact,
+                            need: communityNeed,
+                            quantity: Number(communityQuantity),
+                            points: communityPoints ? Number(communityPoints) : undefined,
+                            description: communityDescription
+                        })
+                    });
+                } catch (e) {
+                    console.warn('Failed to save community need to backend:', e);
+                }
+
+                // Refresh matches
                 generateFarmToFlatMatches();
-                
-                alert('Community needs added to map!');
+                alert('Community needs submitted!');
                 communityModal.classList.add('hidden');
             });
         });
