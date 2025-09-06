@@ -802,8 +802,8 @@
             (async function refreshMatchesFromBackend(){
                 try {
                     const [farmerRes, communityRes] = await Promise.all([
-                        fetch('/api/circularity/farmers'),
-                        fetch('/api/circularity/communities')
+                        fetch('../api/circularity/farmers'),
+                    fetch('../api/circularity/communities')
                     ]);
                     if (farmerRes.ok) {
                         const json = await farmerRes.json();
@@ -996,7 +996,7 @@
                 // Persist to backend if available
                 try {
                     const token = localStorage.getItem('token');
-                    await fetch('/api/circularity/farmers', {
+                    await fetch('../api/circularity/farmers', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1073,7 +1073,7 @@
                 // Persist to backend if available
                 try {
                     const token = localStorage.getItem('token');
-                    await fetch('/api/circularity/communities', {
+                    await fetch('../api/circularity/communities', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

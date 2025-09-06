@@ -107,7 +107,7 @@ const wisdomBotWidget = (() => {
         data = { success: true, wisdom: response };
       } else {
         // In production mode, use real API
-        const res = await fetch('/api/wisdom/chat', {
+        const res = await fetch('../api/wisdom/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: userMsg })

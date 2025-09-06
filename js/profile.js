@@ -50,7 +50,7 @@ function loadUserProfile() {
 
     // Production mode logic remains unchanged
     const token = localStorage.getItem('token');
-    fetch('/api/auth/me', {
+    fetch('http://localhost:3001/api/auth/me', {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
     })
@@ -364,7 +364,7 @@ function updateProfile() {
 
         // Production mode logic remains unchanged
         const token = localStorage.getItem('token');
-        fetch('/api/auth/updateprofile', {
+        fetch('http://localhost:3001/api/auth/updateprofile', {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
@@ -462,7 +462,7 @@ function loadUserIdeas() {
         }
         
         // In production mode, use real API
-        fetch('/api/ideas', {
+        fetch('http://localhost:3001/api/ideas', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -767,7 +767,7 @@ function signOut() {
         // This is a good security practice if your backend supports it
         const token = localStorage.getItem('token');
         if (token) {
-            fetch('/api/auth/logout', {
+            fetch('http://localhost:3001/api/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

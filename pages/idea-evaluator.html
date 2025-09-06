@@ -566,7 +566,7 @@
             try {
                 // First create the idea
                 console.log('Submitting ideaData:', ideaData);
-                const createResponse = await fetch('/api/ideas', {
+                const createResponse = await fetch('http://localhost:3001/api/ideas', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -584,7 +584,7 @@
                 const ideaId = createResult.data._id;
                 
                 // Then evaluate the idea
-                const evaluateResponse = await fetch(`/api/ideas/${ideaId}/evaluate`, {
+                const evaluateResponse = await fetch(`http://localhost:3001/api/ideas/${ideaId}/evaluate`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`

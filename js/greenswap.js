@@ -152,7 +152,7 @@ async function handleTradeFormSubmit(event) {
 
     try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/trades', {
+        const res = await fetch('../api/trades', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
             body: JSON.stringify({ offering, seeking, category })
@@ -245,7 +245,7 @@ async function loadTradesFromLocalStorage() {
     if (!tableBody) return;
     tableBody.innerHTML = '';
     try {
-        const res = await fetch('/api/trades');
+        const res = await fetch('../api/trades');
         if (res.ok) {
             const json = await res.json();
             json.data.forEach(trade => addTradeToTable({

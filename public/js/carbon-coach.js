@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
       formData.append('region', document.getElementById('region').value || 'Other');
       
       // Send data to server
-      fetch('/api/carbon/calculate', {
+      fetch('../../api/carbon/calculate', {
         method: 'POST',
         body: formData,
         // No Content-Type header needed as FormData sets it automatically with boundary
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (saveButton) {
       saveButton.onclick = function() {
         // Send a request to save the carbon footprint
-        fetch('/api/carbon/entries', {
+        fetch('../../api/carbon/entries', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

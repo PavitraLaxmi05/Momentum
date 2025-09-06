@@ -10,12 +10,11 @@ router.post('/register', register);
 router.post('/login', login);
 
 // Protected routes
-router.get('/me', protect, getMe);
 router.put('/updateprofile', protect, upload.single('profilePicture'), updateProfile);
 router.put('/updatepassword', protect, updatePassword);
 
 // Add route for fetching authenticated user profile
 router.route('/me')
-  .get(getAuthenticatedUser);
+  .get(protect, getMe);
 
 module.exports = router;
